@@ -3,3 +3,4 @@ log.txt
 config.txt
 backup/
 demos/
+.DS_Store
