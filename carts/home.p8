@@ -32,7 +32,9 @@ outdoor_items = {
 
 item_selection = outdoor_items.trash
 
-function _update()
+alternative_selected = 0
+
+function _update60()
   t = time()
   if (game == "outside")
   then
@@ -61,6 +63,7 @@ function drawOutside()
   end
   if (show_alternatives == false and btnp(buttons.o))
   then
+    alternative_selected = 0
     show_alternatives = true
   elseif (show_alternatives == true and btnp(buttons.x))
   then
@@ -69,8 +72,7 @@ function drawOutside()
   if (show_alternatives)
   then
     -- show alternative selection for current item
-    color(8)
-    print("test", 64, 64)
+    drawAlternativeSelection()
   end
 end
 
@@ -83,6 +85,35 @@ end
 
 function updateOutside()
   _draw()
+end
+
+function drawAlternativeSelection()
+  -- options display holders
+  color(6)
+  rectfill(8, 8, 120, 40)
+  rectfill(8, 48, 120, 80)
+  rectfill(8, 88, 120, 120)
+  
+  -- draw the options HERE
+
+  -- selection
+  if (btnp(buttons.down))
+  then
+    -- this should only increment by one, but for some reason was going by 2s
+    alternative_selected = (alternative_selected + 1 / 2) % 3
+  elseif (btnp(buttons.up))
+  then
+    -- this should only decrement by one, but for some reason was going by 2s
+    alternative_selected = (alternative_selected - 1 / 2) % 3
+  end
+  -- draw highlight rectangle around current selection
+  color(14)
+  rect(8, 8 + alternative_selected * 40, 120, 40 + alternative_selected * 40)
+
+  if (btnp(buttons.o))
+  then
+  -- set current selection to be displayed in scene
+  end
 end
 
 __gfx__
