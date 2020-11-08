@@ -86,7 +86,7 @@ end
 function drawOutside()
   map(0, 0, 0, 0, 16, 16)
   drawTrash()
-  if (t % 2 < 1 and show_alternatives == false)
+  if (t % 2 < 1 and not show_alternatives)
   then
     color(14)
     local highlight_x = item_selection.x
@@ -94,11 +94,11 @@ function drawOutside()
     local size = item_selection.size
     rect(highlight_x, highlight_y, highlight_x + size, highlight_y + size)
   end
-  if (show_alternatives == false and btnp(buttons.o))
+  if (not show_alternatives and btnp(buttons.o))
   then
     alternative_selected = 0
     show_alternatives = true
-  elseif (show_alternatives == true and btnp(buttons.x))
+  elseif (show_alternatives and btnp(buttons.x))
   then
     show_alternatives = false
   end
