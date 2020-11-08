@@ -13,12 +13,28 @@ buttons = {
   x = 5
 }
 
+function hcenter(s)
+  -- screen center minus the
+  -- string length times the 
+  -- pixels in a char's width,
+  -- cut in half
+  return 64-#s*2
+end
+ 
+function vcenter(s)
+  -- screen center minus the
+  -- string height in pixels,
+  -- cut in half
+  return 61
+end
+
 -- change this constant to change modes
 game = "outside"
 
 -- frame timer, incremented each update
 t = 0
 
+show_instructions = true
 show_alternatives = false
 
 outdoor_items = {
@@ -44,9 +60,26 @@ end
 
 function _draw()
   cls()
-  if (game == "outside")
+  if (show_instructions)
+  then
+    drawInstructions()
+  elseif (game == "outside")
   then
     drawOutside()
+  end
+end
+
+function drawInstructions()
+  color(6)
+  rectfill(8, 8, 120, 120)
+  color(2)
+  print('press z to select', 12, 12)
+  print('press x to cancel', 12, 20)
+  print('press x to start', hcenter('press x to start'), 110)
+  if (btnp(buttons.x))
+  then
+    show_instructions = false
+    _draw()
   end
 end
 
