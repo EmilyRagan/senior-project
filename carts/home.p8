@@ -110,10 +110,11 @@ function drawAlternativeSelection()
   color(14)
   rect(8, 8 + alternative_selected * 40, 120, 40 + alternative_selected * 40)
 
-  if (btnp(buttons.o))
-  then
-  -- set current selection to be displayed in scene
-  end
+  -- if (btnp(buttons.o))
+  -- then
+  --   -- set current selection to be displayed in scene and close alternative selection
+  --   show_alternatives = false
+  -- end
 end
 
 __gfx__
