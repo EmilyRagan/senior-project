@@ -159,7 +159,7 @@ function drawSprite(item)
   -- y (number): y location to start drawing
   -- w (number): number of sprites wide
   -- h (number): number of sprites tall
-  spr(item.sprite_start, item.x, item.y, item.sprite_height, item.sprite_width)
+  spr(item.sprite_start, item.x, item.y, item.sprite_width, item.sprite_height)
 end
 
 function updateOutside()
