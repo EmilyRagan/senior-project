@@ -23,11 +23,6 @@ function vcenter(s)
   return 61
 end
 
--- current state of game
-current_scene = outdoor_items
-current_index = 1
-current_item = current_scene[current_index]
-
 -- frame timer, incremented each update
 t = 0
 
@@ -99,6 +94,11 @@ outdoor_items = {
     }
   }
 }
+
+-- current state of game
+current_scene = outdoor_items
+current_index = 1
+current_item = current_scene[current_index]
 
 alternative_selected = 0
 
