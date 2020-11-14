@@ -159,7 +159,7 @@ function _draw()
   if (show_instructions)
   then
     drawInstructions()
-  elseif (game == "outside")
+  elseif (current_scene == outdoor_items)
   then
     drawOutside()
   end
