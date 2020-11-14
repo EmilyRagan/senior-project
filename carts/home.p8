@@ -14,26 +14,24 @@ buttons = {
 }
 
 function hcenter(s)
-  -- screen center minus the
-  -- string length times the 
-  -- pixels in a char's width,
-  -- cut in half
+  -- screen center minus the string length times the pixels in a char's width, cut in half
   return 64-#s*2
 end
  
 function vcenter(s)
-  -- screen center minus the
-  -- string height in pixels,
-  -- cut in half
+  -- screen center minus the string height in pixels, cut in half
   return 61
 end
 
--- change this constant to change modes
-game = "outside"
+-- current state of game
+current_scene = outdoor_items
+current_index = 1
+current_item = current_scene[current_index]
 
 -- frame timer, incremented each update
 t = 0
 
+-- initial display values
 show_instructions = true
 show_alternatives = false
 
@@ -102,16 +100,25 @@ outdoor_items = {
   }
 }
 
-item_selection = outdoor_items[1]
-
 alternative_selected = 0
 
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
-  if (game == "outside")
+  if (current_scene == outdoor_items)
   then
     updateOutside()
+  end
+
+  -- logic for navigating around the items in the scene
+  if (not show_alternatives and btnp(buttons.down))
+  then
+    current_index = current_index % #current_scene + 1
+    current_item = current_scene[current_index]
+  elseif (not show_alternatives and btnp(buttons.up))
+  then
+    current_index = (current_index - 2) % #current_scene + 1
+    current_item = current_scene[current_index]
   end
 
   -- logic for opening and closing alternative selection
@@ -181,7 +188,7 @@ function drawOutside()
   if (t % 2 < 1 and not show_alternatives)
   then
     color(14)
-    local item = item_selection.options[item_selection.current]
+    local item = current_item.options[current_item.current]
     local highlight_x = item.x
     local highlight_y = item.y
     local width = item.sprite_width * 8
