@@ -38,7 +38,7 @@ show_instructions = true
 show_alternatives = false
 
 outdoor_items = {
-  trash = {
+  {
     -- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
     -- 0 index === nil
     current = 1,
@@ -59,7 +59,7 @@ outdoor_items = {
       }
     }
   },
-  car = {
+  {
     current = 1,
     options = {
       {
@@ -80,7 +80,7 @@ outdoor_items = {
   }
 }
 
-item_selection = outdoor_items.trash
+item_selection = outdoor_items[1]
 
 alternative_selected = 0
 
@@ -152,8 +152,10 @@ end
 
 function drawOutside()
   map(0, 0, 0, 0, 16, 16)
-  drawSprite(outdoor_items.trash.options[outdoor_items.trash.current])
-  drawSprite(outdoor_items.car.options[outdoor_items.car.current])
+  for key, value in ipairs(outdoor_items)
+  do
+    drawSprite(value.options[value.current])
+  end
   if (t % 2 < 1 and not show_alternatives)
   then
     color(14)
