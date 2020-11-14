@@ -50,11 +50,44 @@ item_selection = outdoor_items.trash
 
 alternative_selected = 0
 
+-- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
   if (game == "outside")
   then
     updateOutside()
+  end
+
+  -- logic for opening and closing alternative selection
+  if (not show_alternatives and btnp(buttons.o))
+  then
+    alternative_selected = 0
+    show_alternatives = true
+    return
+  elseif (show_alternatives and btnp(buttons.x))
+  then
+    show_alternatives = false
+    return
+  end
+
+  -- logic for alternative selection
+  if (show_alternatives)
+  then
+    -- highlight logic
+    if (btnp(buttons.down))
+    then
+      alternative_selected = (alternative_selected + 1) % 3
+    elseif (btnp(buttons.up))
+    then
+      alternative_selected = (alternative_selected - 1) % 3
+    end
+
+    -- selection logic
+    if (btnp(buttons.o))
+    then
+      -- set current selection to be displayed in scene and close alternative selection
+      show_alternatives = false
+    end
   end
 end
 
@@ -94,14 +127,6 @@ function drawOutside()
     local size = item_selection.size
     rect(highlight_x, highlight_y, highlight_x + size, highlight_y + size)
   end
-  if (not show_alternatives and btnp(buttons.o))
-  then
-    alternative_selected = 0
-    show_alternatives = true
-  elseif (show_alternatives and btnp(buttons.x))
-  then
-    show_alternatives = false
-  end
   if (show_alternatives)
   then
     -- show alternative selection for current item
@@ -129,25 +154,9 @@ function drawAlternativeSelection()
   
   -- draw the options HERE
 
-  -- selection
-  if (btnp(buttons.down))
-  then
-    -- this should only increment by one, but for some reason was going by 2s
-    alternative_selected = (alternative_selected + 1 / 2) % 3
-  elseif (btnp(buttons.up))
-  then
-    -- this should only decrement by one, but for some reason was going by 2s
-    alternative_selected = (alternative_selected - 1 / 2) % 3
-  end
   -- draw highlight rectangle around current selection
   color(14)
   rect(8, 8 + alternative_selected * 40, 120, 40 + alternative_selected * 40)
-
-  -- if (btnp(buttons.o))
-  -- then
-  --   -- set current selection to be displayed in scene and close alternative selection
-  --   show_alternatives = false
-  -- end
 end
 
 __gfx__
