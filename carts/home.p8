@@ -139,10 +139,10 @@ function _update60()
     -- highlight logic
     if (btnp(buttons.down))
     then
-      alternative_selected = (alternative_selected + 1) % 3
+      alternative_selected = (alternative_selected + 1) % #current_item.options
     elseif (btnp(buttons.up))
     then
-      alternative_selected = (alternative_selected - 1) % 3
+      alternative_selected = (alternative_selected - 1) % #current_item.options
     end
 
     -- selection logic
@@ -198,7 +198,7 @@ function drawOutside()
   if (show_alternatives)
   then
     -- show alternative selection for current item
-    drawAlternativeSelection()
+    drawAlternativeSelection(current_item)
   end
 end
 
@@ -217,13 +217,14 @@ function updateOutside()
   _draw()
 end
 
-function drawAlternativeSelection()
+function drawAlternativeSelection(item)
   -- options display holders
   color(6)
-  rectfill(8, 8, 120, 40)
-  rectfill(8, 48, 120, 80)
-  rectfill(8, 88, 120, 120)
-  
+  for i = 0,#item.options - 1
+  do
+    rectfill(8, 8 + i * 40, 120, 40 * (i + 1))
+  end
+
   -- draw the options HERE
 
   -- draw highlight rectangle around current selection
