@@ -150,6 +150,7 @@ function _update60()
     then
       -- set current selection to be displayed in scene and close alternative selection
       show_alternatives = false
+      current_item.current = alternative_selected + 1
     end
   end
 end
