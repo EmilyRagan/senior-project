@@ -139,10 +139,10 @@ function _update60()
     -- highlight logic
     if (btnp(buttons.down))
     then
-      alternative_selected = (alternative_selected + 1) % 3
+      alternative_selected = (alternative_selected + 1) % #current_item.options
     elseif (btnp(buttons.up))
     then
-      alternative_selected = (alternative_selected - 1) % 3
+      alternative_selected = (alternative_selected - 1) % #current_item.options
     end
 
     -- selection logic
@@ -150,6 +150,7 @@ function _update60()
     then
       -- set current selection to be displayed in scene and close alternative selection
       show_alternatives = false
+      current_item.current = alternative_selected + 1
     end
   end
 end
@@ -198,7 +199,7 @@ function drawOutside()
   if (show_alternatives)
   then
     -- show alternative selection for current item
-    drawAlternativeSelection()
+    drawAlternativeSelection(current_item)
   end
 end
 
@@ -217,14 +218,15 @@ function updateOutside()
   _draw()
 end
 
-function drawAlternativeSelection()
-  -- options display holders
-  color(6)
-  rectfill(8, 8, 120, 40)
-  rectfill(8, 48, 120, 80)
-  rectfill(8, 88, 120, 120)
-  
-  -- draw the options HERE
+function drawAlternativeSelection(item)
+  -- alternative options
+  color(0)
+  for idx, val in ipairs(item.options)
+  do
+    rectfill(8, 8 + ((idx - 1) * 40), 120, 40 * idx)
+    -- TODO: ideally, center the sprite in the rect
+    spr(val.sprite_start, 50, 40 * (idx - 0.5), val.sprite_width, val.sprite_height)
+  end
 
   -- draw highlight rectangle around current selection
   color(14)
