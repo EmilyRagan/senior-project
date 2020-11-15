@@ -218,14 +218,14 @@ function updateOutside()
 end
 
 function drawAlternativeSelection(item)
-  -- options display holders
-  color(6)
-  for i = 0,#item.options - 1
+  -- alternative options
+  color(0)
+  for idx, val in ipairs(item.options)
   do
-    rectfill(8, 8 + i * 40, 120, 40 * (i + 1))
+    rectfill(8, 8 + ((idx - 1) * 40), 120, 40 * idx)
+    -- TODO: ideally, center the sprite in the rect
+    spr(val.sprite_start, 50, 40 * (idx - 0.5), val.sprite_width, val.sprite_height)
   end
-
-  -- draw the options HERE
 
   -- draw highlight rectangle around current selection
   color(14)
