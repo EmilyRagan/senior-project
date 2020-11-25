@@ -95,8 +95,10 @@ outdoor_items = {
   }
 }
 
+kitchen_items = {}
+
 -- current state of game
-current_scene = outdoor_items
+current_scene = kitchen_items
 current_index = 1
 current_item = current_scene[current_index]
 
@@ -108,6 +110,9 @@ function _update60()
   if (current_scene == outdoor_items)
   then
     updateOutside()
+  elseif (current_scene == kitchen_items)
+  then
+    updateKitchen()
   end
 
   -- logic for navigating around the items in the scene
@@ -163,6 +168,9 @@ function _draw()
   elseif (current_scene == outdoor_items)
   then
     drawOutside()
+  elseif (current_scene == kitchen_items)
+  then
+    drawKitchen()
   end
 end
 
@@ -210,6 +218,10 @@ function drawOutside()
   end
 end
 
+function drawKitchen()
+  map(16, 0, 0, 0, 16, 16)
+end
+
 function drawSprite(item)
   -- https://pico-8.fandom.com/wiki/Spr
   -- spr( n, x, y, [w,] [h,] )
@@ -222,6 +234,10 @@ function drawSprite(item)
 end
 
 function updateOutside()
+  _draw()
+end
+
+function updateKitchen()
   _draw()
 end
 
