@@ -34,24 +34,24 @@ show_alternatives = false
 -- 0 index === nil
 outdoor_items = {
   {
-    -- trash options
+    -- roof options
     current = 1,
     options = {
       {
-        sprite_start = 7,
+        sprite_start = 192,
         sprite_height = 2,
-        sprite_width = 2,
-        x = 72,
-        y = 108,
+        sprite_width = 6,
+        x = 38,
+        y = 26,
       },
       {
-        sprite_start = 7,
+        sprite_start = 64,
         sprite_height = 2,
-        sprite_width = 4,
-        x = 72,
-        y = 108
+        sprite_width = 6,
+        x = 38,
+        y = 26,
+      },
       }
-    }
   },
   {
     -- car options
@@ -74,23 +74,23 @@ outdoor_items = {
     }
   },
   {
-    -- roof options
+    -- trash options
     current = 1,
     options = {
       {
-        sprite_start = 192,
+        sprite_start = 7,
         sprite_height = 2,
-        sprite_width = 6,
-        x = 38,
-        y = 26,
+        sprite_width = 2,
+        x = 72,
+        y = 108,
       },
       {
-        sprite_start = 64,
+        sprite_start = 7,
         sprite_height = 2,
-        sprite_width = 6,
-        x = 38,
-        y = 26,
-      },
+        sprite_width = 4,
+        x = 72,
+        y = 108
+      }
     }
   }
 }
