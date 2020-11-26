@@ -124,6 +124,9 @@ kitchen_items = {
   }
 }
 
+-- link the scene transition items
+kitchen_items[1]['navigate'] = outdoor_items
+
 -- current state of game
 current_scene = outdoor_items
 current_index = 1
