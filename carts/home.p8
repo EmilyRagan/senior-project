@@ -159,9 +159,17 @@ function _update60()
   -- logic for opening and closing alternative selection
   if (not show_alternatives and btnp(buttons.o))
   then
+    if (#current_item.options > 1)
+    then
     alternative_selected = 0
     show_alternatives = true
     return
+    elseif (current_item.navigate != nil)
+    then
+      current_scene = current_item.navigate
+      current_index = 1
+      current_item = current_scene[current_index]
+    end
   elseif (show_alternatives and btnp(buttons.x))
   then
     show_alternatives = false
