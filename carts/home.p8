@@ -172,6 +172,22 @@ function _draw()
   then
     drawKitchen()
   end
+
+  if (not show_instructions and t % 2 < 1 and not show_alternatives)
+  then
+    color(14)
+    local item = current_item.options[current_item.current]
+    local highlight_x = item.x - 1
+    local highlight_y = item.y - 1
+    local width = item.sprite_width * 8 + 1
+    local height = item.sprite_height * 8 + 1
+    rect(highlight_x, highlight_y, highlight_x + width, highlight_y + height)
+end
+  if (show_alternatives)
+  then
+    -- show alternative selection for current item
+    drawAlternativeSelection(current_item)
+  end
 end
 
 function drawInstructions()
@@ -201,22 +217,7 @@ function drawOutside()
   do
     drawSprite(value.options[value.current])
   end
-  if (t % 2 < 1 and not show_alternatives)
-  then
-    color(14)
-    local item = current_item.options[current_item.current]
-    local highlight_x = item.x
-    local highlight_y = item.y
-    local width = item.sprite_width * 8
-    local height = item.sprite_height * 8
-    rect(highlight_x, highlight_y, highlight_x + width, highlight_y + height)
   end
-  if (show_alternatives)
-  then
-    -- show alternative selection for current item
-    drawAlternativeSelection(current_item)
-  end
-end
 
 function drawKitchen()
   map(16, 0, 0, 0, 16, 16)
