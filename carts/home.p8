@@ -142,7 +142,7 @@ kitchen_items[1]['navigate'] = outdoor_items
 outdoor_items[2]['navigate'] = kitchen_items
 
 -- current state of game
-current_scene = kitchen_items
+current_scene = outdoor_items
 current_index = 1
 current_item = current_scene[current_index]
 
@@ -151,63 +151,66 @@ alternative_selected = 0
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
-  if (current_scene == outdoor_items)
+  if (not show_instructions)
   then
-    updateOutside()
-  elseif (current_scene == kitchen_items)
-  then
-    updateKitchen()
-  end
-
-  -- logic for navigating around the items in the scene
-  if (not show_alternatives and btnp(buttons.down))
-  then
-    current_index = current_index % #current_scene + 1
-    current_item = current_scene[current_index]
-  elseif (not show_alternatives and btnp(buttons.up))
-  then
-    current_index = (current_index - 2) % #current_scene + 1
-    current_item = current_scene[current_index]
-  end
-
-  -- logic for opening and closing alternative selection
-  if (not show_alternatives and btnp(buttons.o))
-  then
-    if (#current_item.options > 1)
+    if (current_scene == outdoor_items)
     then
-      alternative_selected = 0
-      show_alternatives = true
-      return
-    elseif (current_item.navigate != nil)
+      updateOutside()
+    elseif (current_scene == kitchen_items)
     then
-      current_scene = current_item.navigate
-      current_index = 1
+      updateKitchen()
+    end
+
+    -- logic for navigating around the items in the scene
+    if (not show_alternatives and btnp(buttons.down))
+    then
+      current_index = current_index % #current_scene + 1
+      current_item = current_scene[current_index]
+    elseif (not show_alternatives and btnp(buttons.up))
+    then
+      current_index = (current_index - 2) % #current_scene + 1
       current_item = current_scene[current_index]
     end
-  elseif (show_alternatives and btnp(buttons.x))
-  then
-    show_alternatives = false
-    return
-  end
 
-  -- logic for alternative selection
-  if (show_alternatives)
-  then
-    -- highlight logic
-    if (btnp(buttons.down))
+    -- logic for opening and closing alternative selection
+    if (not show_alternatives and btnp(buttons.o))
     then
-      alternative_selected = (alternative_selected + 1) % #current_item.options
-    elseif (btnp(buttons.up))
+      if (#current_item.options > 1)
+      then
+        alternative_selected = 0
+        show_alternatives = true
+        return
+      elseif (current_item.navigate != nil)
+      then
+        current_scene = current_item.navigate
+        current_index = 1
+        current_item = current_scene[current_index]
+      end
+    elseif (show_alternatives and btnp(buttons.x))
     then
-      alternative_selected = (alternative_selected - 1) % #current_item.options
+      show_alternatives = false
+      return
     end
 
-    -- selection logic
-    if (btnp(buttons.o))
+    -- logic for alternative selection
+    if (show_alternatives)
     then
-      -- set current selection to be displayed in scene and close alternative selection
-      show_alternatives = false
-      current_item.current = alternative_selected + 1
+      -- highlight logic
+      if (btnp(buttons.down))
+      then
+        alternative_selected = (alternative_selected + 1) % #current_item.options
+      elseif (btnp(buttons.up))
+      then
+        alternative_selected = (alternative_selected - 1) % #current_item.options
+      end
+
+      -- selection logic
+      if (btnp(buttons.o))
+      then
+        -- set current selection to be displayed in scene and close alternative selection
+        show_alternatives = false
+        current_item.current = alternative_selected + 1
+      end
     end
   end
 end
