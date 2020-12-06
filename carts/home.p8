@@ -44,6 +44,7 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
+        carbon = 50
       },
       {
         -- solar panels
@@ -52,6 +53,7 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
+        carbon = 40
       },
     }
   },
@@ -79,6 +81,7 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 92,
+        carbon = 100
       },
       {
         -- electric car
@@ -86,7 +89,8 @@ outdoor_items = {
         sprite_height = 3,
         sprite_width = 3,
         x = 36,
-        y = 92
+        y = 92,
+        carbon = 50
       },
       {
         -- bike
@@ -94,7 +98,8 @@ outdoor_items = {
         sprite_height = 2,
         sprite_width = 3,
         x = 36,
-        y = 100
+        y = 100,
+        carbon = 0
       }
     }
   },
@@ -103,18 +108,27 @@ outdoor_items = {
     current = 1,
     options = {
       {
+        -- trash
         sprite_start = 7,
         sprite_height = 2,
         sprite_width = 2,
         x = 72,
         y = 108,
+        -- plastic multiplier
+        plastic = 1,
+        carbon = 10
       },
       {
+        -- trash and recycling
         sprite_start = 7,
         sprite_height = 2,
         sprite_width = 4,
         x = 72,
-        y = 108
+        y = 108,
+        -- 8.4% recycling rate in 2017, 8.5% in 2018
+        -- plastic multiplier
+        plastic = 0.9,
+        carbon = 9
       }
     }
   }
