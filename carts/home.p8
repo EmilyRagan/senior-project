@@ -254,6 +254,7 @@ function _draw()
     drawKitchen()
   end
 
+  -- flash highlight on and off
   if (not show_instructions and t % 2 < 1 and not show_alternatives)
   then
     color(14)
@@ -264,11 +265,34 @@ function _draw()
     local height = item.sprite_height * 8 + 1
     rect(highlight_x, highlight_y, highlight_x + width, highlight_y + height)
   end
+
   if (show_alternatives)
   then
     -- show alternative selection for current item
     drawAlternativeSelection(current_item)
   end
+
+  if (not show_instructions)
+  then
+    drawHeadsUpDisplay()
+  end
+end
+
+function drawHeadsUpDisplay()
+  local co2 = 0
+  for idx, val in ipairs(outdoor_items)
+  do
+    local carbonVal = val.options[val.current].carbon
+    if (carbonVal != nil)
+    then
+      co2 += carbonVal
+    end
+  end
+
+  color(0)
+  print('co2', 2, 2)
+  print(co2, 18, 2)
+  -- print('plastic', 2, 10)
 end
 
 function drawInstructions()
