@@ -38,18 +38,30 @@ outdoor_items = {
     current = 1,
     options = {
       {
+        -- nothing
         sprite_start = 192,
         sprite_height = 2,
         sprite_width = 6,
         x = 38,
         y = 26,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 50
       },
       {
+        -- solar panels
         sprite_start = 64,
         sprite_height = 2,
         sprite_width = 6,
         x = 38,
         y = 26,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 40
       },
     }
   },
@@ -71,18 +83,43 @@ outdoor_items = {
     current = 1,
     options = {
       {
+        -- gas car
         sprite_start = 19,
         sprite_height = 3,
         sprite_width = 3,
         x = 36,
         y = 92,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 100
       },
       {
+        -- electric car
         sprite_start = 16,
         sprite_height = 3,
         sprite_width = 3,
         x = 36,
-        y = 92
+        y = 92,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 50
+      },
+      {
+        -- bike
+        sprite_start = 38,
+        sprite_height = 2,
+        sprite_width = 3,
+        x = 36,
+        y = 100,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 0
       }
     }
   },
@@ -91,18 +128,31 @@ outdoor_items = {
     current = 1,
     options = {
       {
+        -- trash
         sprite_start = 7,
         sprite_height = 2,
         sprite_width = 2,
         x = 72,
         y = 108,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
+        carbon = 10
       },
       {
+        -- trash and recycling
         sprite_start = 7,
         sprite_height = 2,
         sprite_width = 4,
         x = 72,
-        y = 108
+        y = 108,
+        plastic = {
+          -- 8.4% recycling rate in 2017, 8.5% in 2018
+          multiplier = 0.9,
+          addition = 0
+        },
+        carbon = 9
       }
     }
   }
@@ -142,7 +192,7 @@ kitchen_items[1]['navigate'] = outdoor_items
 outdoor_items[2]['navigate'] = kitchen_items
 
 -- current state of game
-current_scene = kitchen_items
+current_scene = outdoor_items
 current_index = 1
 current_item = current_scene[current_index]
 
@@ -151,63 +201,66 @@ alternative_selected = 0
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
-  if (current_scene == outdoor_items)
+  if (not show_instructions)
   then
-    updateOutside()
-  elseif (current_scene == kitchen_items)
-  then
-    updateKitchen()
-  end
-
-  -- logic for navigating around the items in the scene
-  if (not show_alternatives and btnp(buttons.down))
-  then
-    current_index = current_index % #current_scene + 1
-    current_item = current_scene[current_index]
-  elseif (not show_alternatives and btnp(buttons.up))
-  then
-    current_index = (current_index - 2) % #current_scene + 1
-    current_item = current_scene[current_index]
-  end
-
-  -- logic for opening and closing alternative selection
-  if (not show_alternatives and btnp(buttons.o))
-  then
-    if (#current_item.options > 1)
+    if (current_scene == outdoor_items)
     then
-      alternative_selected = 0
-      show_alternatives = true
-      return
-    elseif (current_item.navigate != nil)
+      updateOutside()
+    elseif (current_scene == kitchen_items)
     then
-      current_scene = current_item.navigate
-      current_index = 1
+      updateKitchen()
+    end
+
+    -- logic for navigating around the items in the scene
+    if (not show_alternatives and btnp(buttons.down))
+    then
+      current_index = current_index % #current_scene + 1
+      current_item = current_scene[current_index]
+    elseif (not show_alternatives and btnp(buttons.up))
+    then
+      current_index = (current_index - 2) % #current_scene + 1
       current_item = current_scene[current_index]
     end
-  elseif (show_alternatives and btnp(buttons.x))
-  then
-    show_alternatives = false
-    return
-  end
 
-  -- logic for alternative selection
-  if (show_alternatives)
-  then
-    -- highlight logic
-    if (btnp(buttons.down))
+    -- logic for opening and closing alternative selection
+    if (not show_alternatives and btnp(buttons.o))
     then
-      alternative_selected = (alternative_selected + 1) % #current_item.options
-    elseif (btnp(buttons.up))
+      if (#current_item.options > 1)
+      then
+        alternative_selected = current_item.current - 1
+        show_alternatives = true
+        return
+      elseif (current_item.navigate != nil)
+      then
+        current_scene = current_item.navigate
+        current_index = 1
+        current_item = current_scene[current_index]
+      end
+    elseif (show_alternatives and btnp(buttons.x))
     then
-      alternative_selected = (alternative_selected - 1) % #current_item.options
+      show_alternatives = false
+      return
     end
 
-    -- selection logic
-    if (btnp(buttons.o))
+    -- logic for alternative selection
+    if (show_alternatives)
     then
-      -- set current selection to be displayed in scene and close alternative selection
-      show_alternatives = false
-      current_item.current = alternative_selected + 1
+      -- highlight logic
+      if (btnp(buttons.down))
+      then
+        alternative_selected = (alternative_selected + 1) % #current_item.options
+      elseif (btnp(buttons.up))
+      then
+        alternative_selected = (alternative_selected - 1) % #current_item.options
+      end
+
+      -- selection logic
+      if (btnp(buttons.o))
+      then
+        -- set current selection to be displayed in scene and close alternative selection
+        show_alternatives = false
+        current_item.current = alternative_selected + 1
+      end
     end
   end
 end
@@ -225,6 +278,7 @@ function _draw()
     drawKitchen()
   end
 
+  -- flash highlight on and off
   if (not show_instructions and t % 2 < 1 and not show_alternatives)
   then
     color(14)
@@ -235,11 +289,51 @@ function _draw()
     local height = item.sprite_height * 8 + 1
     rect(highlight_x, highlight_y, highlight_x + width, highlight_y + height)
   end
+
   if (show_alternatives)
   then
     -- show alternative selection for current item
     drawAlternativeSelection(current_item)
   end
+
+  if (not show_instructions)
+  then
+    drawHeadsUpDisplay()
+  end
+end
+
+function drawHeadsUpDisplay()
+  local co2 = 0
+  local plasticBase = 0
+  local plasticMultiplier = 1
+  for idx, val in ipairs(outdoor_items)
+  do
+    local carbonVal = val.options[val.current].carbon
+    local plasticVals = val.options[val.current].plastic
+    if (carbonVal != nil)
+    then
+      co2 += carbonVal
+    end
+    if (plasticVals != nil)
+    then
+      local plasticAdd = val.options[val.current].plastic.addition
+      local plasticMult = val.options[val.current].plastic.multiplier
+      if (plasticAdd != nil)
+      then
+        plasticBase += plasticAdd
+      end
+      if (plasticMult != nil)
+      then
+        plasticMultiplier = plasticMultiplier * plasticMult
+      end
+    end
+  end
+
+  color(0)
+  print('co2', 2, 10)
+  print(co2, 18, 10)
+  print('plastic', 2, 2)
+  print(plasticBase * plasticMultiplier, 34, 2)
 end
 
 function drawInstructions()
@@ -332,19 +426,19 @@ __gfx__
 000000bbcccccccbb000000000000088ccccccc80000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
 000000bbcc666ccbb000000000000088ccccccc88000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
 000000bbb666a6bbb000000000000088888666888000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000000bbb66a66bbb000000000000088886666688000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000bbbbbb6aa66bbbbbb000000088888886666688888000000000000000000000000000000000000000000001666666666666666666666610000000000000000
-000bbbbbbaaaaabbbbbb000000088888888666888888000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000bb999b66aa6b999bb000000088aaa8888888aaa88000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000bb999b66a66b999bb000000088aaa8888668aaa88000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000bb999b6a666b999bb000000088aaa8888668aaa88000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-00555555555555555555500000555555555555555555500000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-00555555555555555555500000555555555556655555500000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000ddd00000000000ddd0000000ddd00000056650ddd000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000ddd00000000000ddd0000000ddd00000055550ddd000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-000ddd00000000000ddd0000000ddd00000000000ddd000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
-00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000000bbb66a66bbb000000000000088886666688000000000000000000001000000000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000bbbbbb6aa66bbbbbb000000088888886666688888000000022000000000110000000000000000000000001666666666666666666666610000000000000000
+000bbbbbbaaaaabbbbbb000000088888888666888888000000022220000000011100000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000bb999b66aa6b999bb000000088aaa8888888aaa88000000002222211000010010000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000bb999b66a66b999bb000000088aaa8888668aaa88000000002221000111110000000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000bb999b6a666b999bb000000088aaa8888668aaa88000000000100110000010000000000000000000000001cccccccccc6ccccccccccc10000000000000000
+00555555555555555555500000555555555555555555500000000100001100001000000000000000000000001cccccccccc6ccccccccccc10000000000000000
+00555555555555555555500000555555555556655555500000051500000011051500000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000ddd00000000000ddd0000000ddd00000056650ddd000005501055000005111055000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000ddd00000000000ddd0000000ddd00000055550ddd000005001005000005001005000000000000000000001cccccccccc6ccccccccccc10000000000000000
+000ddd00000000000ddd0000000ddd00000000000ddd000005000005000005000005000000000000000000001cccccccccc6ccccccccccc10000000000000000
+00000000000000000000000000000000000000000000000005500055000005500055000000000000000000001cccccccccc6ccccccccccc10000000000000000
+00000000000000000000000000000000000000000000000000055500000000055500000000000000000000001cccccccccc6ccccccccccc10000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000001111111111111111111111110000000000000000
 000000006666666666666666666666666666666600000000111111111111111100dddddddddddd00000000000000000000000000000000000000000000000000
 00000000611111166111111661111116611111160000000014444444444444410dddddddddddddd0000000000000000000000000000000000000000000000000
@@ -444,19 +538,19 @@ __gfx__
 __label__
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc000c0ccc000cc00c000c000cc00ccccc000ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0c0c0ccc0c0c0cccc0ccc0cc0ccccccc0c0ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc000c0ccc000c000cc0ccc0cc0ccccccc0c0ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0ccc0ccc0c0ccc0cc0ccc0cc0ccccccc0c0ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0ccc000c0c0c00ccc0cc000cc00ccccc000ccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccc00050005cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccc00050005cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccc00050005cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccc55555555cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
-cccccccccccccccccccccccccccccccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccc00cc00c000ccccc00cc0ccc000ccccccccccccccccccccccccccc00050005cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0ccc0c0ccc0cccccc0cc0ccc0c0ccccccccccccccccccccccccccc55555555cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0ccc0c0c000cccccc0cc000c0c0ccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+cc0ccc0c0c0cccccccc0cc0c0c0c0ccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+ccc00c00cc000ccccc000c000c000ccccccccccccccccccccccccccc50005000cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccccccccccc55555555cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccc00050005000500050005000500050005cccccccccccccccccccccccccccccccccccccccccccccccc
 cccccccccccccccccccccccccccccccccccccccccccccccc00050005000500050005000500050005cccccccccccccccccccccccccccccccccccccccccccccccc
@@ -498,63 +592,63 @@ cccccccccccccccccccccccc66666666666666666666666666666666666666666666666666666666
 cccccccccccccccccccccccc44464444444644444446444444464444444644444446444444464444444644444446444444464444cccccccccccccccccccccccc
 cccccccccccccccccccccccc44464444444644444446444444464444444644444446444444464444444644444446444444464444cccccccccccccccccccccccc
 cccccccccccccccccccccccc44464444444644444446444444464444444644444446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444644444446444444464444444cccccccccccccccccccccccc
-cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666666666666666666666666666cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
-cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444444644444446444444464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666111111111111111166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444445544166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444455554164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444455554164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444144444444445544164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444dddddddddddddddddddddddddddddddd6444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc64444444555555555555555555555555555555556444444464444444144444444444444164444444cccccccccccccccccccccccc
+cccccccccccccccccccccccc66666666dddddddddddddddddddddddddddddddd6666666666666666144444444444444166666666cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
+cccccccccccccccccccccccc44464444dddddddddddddddddddddddddddddddd4446444444464444144444444444444144464444cccccccccccccccccccccccc
 33b3333333b3333333b3333333b333336666666066666660666666606666666033b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33333
 333333b3333333b3333333b3333333b364666666646666666466666664666666333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3
 33333333333333333333333333333333d660666fd660666fd660666fd660666f3333333333333333333333333333333333333333333333333333333333333333
 b3333333b3333333b3333333b333333366666466666664666666646666666466b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333
 333b3333333b3333333b3333333b33336f6666666f6666666f6666666f666666333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333
 33333333333333333333333333333333666766066667660666676606666766063333333333333333333333333333333333333333333333333333333333333333
-33333b3333333b3333333b3333333b336066666660666666606666666066666633333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33
-33333333333333333333333333333333666d6676666d6676666d6676666d66763333333333333333333333333333333333333333333333333333333333333333
-33b3333333b3333333b3333333b333336666666066666660666666606666666033b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33333
-333333b3333333b3333333b3333333b364666666646666666466666664666666333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3
-33333333333333333333333333333333d660666fd660666fd660666fd660666f3333333333333333333333333333333333333333333333333333333333333333
-b3333333b3333333b3333333b333333366666466666664666666646666666466b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333
-333b3333333b3333333b3333333b33336f6666666f6666666f6666666f666666333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333
-33333333333333333333333333333333666766066667660666676606666766063333333333333333333333333333333333333333333333333333333333333333
-33333b3333333b3333333b3333333b336066666660666666606666666066666633333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33
-33333333333333333333333333333333666d6676666d6676666d6676666d66763333333333333333333333333333333333333333333333333333333333333333
-33b3333333b3333333b3333333b333336666666066666660666666606666666033b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33333
-333333b3333333b3333333b3333333b364666666646666666466666664666666333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3
-33333333333333333333333333333333d660666fd660666fd660666fd660666f3333333333333333333333333333333333333333333333333333333333333333
-b3333333b3333333b3333333b333333366666466666664666666646666666466b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333
-333b3333333b3333333b3333333b33336f6666666f6666666f6666666f666666333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333
-33333333333333333333333333333333666766066667660666676606666766063333333333333333333333333333333333333333333333333333333333333333
-33333b3333333b3333333b3333333b336066666660666666606666666066666633333b333366666666666b3333333b3333333b3333333b3333333b3333333b33
-33333333333333333333333333333333666d6676666d6676666d6676666d66763333333336666666666666633333333333333333333333333333333333333333
-33b3333333b3333333b3333333b333336666666066666660666666606666666033b33333366666666666666333b3333333b3333333b3333333b3333333b33333
+33333b3333333b3333333b3333333b336066666660888888888866666066666633333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33
+33333333333333333333333333333333666d66766688888888886676666d66763333333333333333333333333333333333333333333333333333333333333333
+33b3333333b3333333b3333333b33333666666606688ccccccc866606666666033b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33333
+333333b3333333b3333333b3333333b3646666666488ccccccc8666664666666333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3
+33333333333333333333333333333333d660666fd688ccccccc8666fd660666f3333333333333333333333333333333333333333333333333333333333333333
+b3333333b3333333b3333333b3333333666664666688ccccccc8646666666466b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333
+333b3333333b3333333b3333333b33336f6666666f88ccccccc886666f666666333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333
+33333333333333333333333333333333666766066688888666888606666766063333333333333333333333333333333333333333333333333333333333333333
+33333b3333333b3333333b3333333b336066666660888866666886666066666633333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33
+33333333333333333333333333333333666d66788888886666688888666d66763333333333333333333333333333333333333333333333333333333333333333
+33b3333333b3333333b3333333b333336666666888888886668888886666666033b3333333b3333333b3333333b3333333b3333333b3333333b3333333b33333
+333333b3333333b3333333b3333333b3646666688aaa8888888aaa8864666666333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3
+33333333333333333333333333333333d66066688aaa8888668aaa88d660666f3333333333333333333333333333333333333333333333333333333333333333
+b3333333b3333333b3333333b3333333666664688aaa8888668aaa8866666466b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333333
+333b3333333b3333333b3333333b33336f66665555555555555555555f666666333b3333333b3333333b3333333b3333333b3333333b3333333b3333333b3333
+33333333333333333333333333333333666766555555555556655555566766063333333333333333333333333333333333333333333333333333333333333333
+33333b3333333b3333333b3333333b336066666ddd66666656656ddd6066666633333b333366666666666b3333333b3333333b3333333b3333333b3333333b33
+33333333333333333333333333333333666d667ddd6d667655556ddd666d66763333333336666666666666633333333333333333333333333333333333333333
+33b3333333b3333333b3333333b333336666666ddd66666066666ddd6666666033b33333366666666666666333b3333333b3333333b3333333b3333333b33333
 333333b3333333b3333333b3333333b364666666646666666466666664666666333333b333116111611611b3333333b3333333b3333333b3333333b3333333b3
 33333333333333333333333333333333d660666fd660666fd660666fd660666f3333333333316111611613333333333333333333333333333333333333333333
 b3333333b3333333b3333333b333333366666466666664666666646666666466b3333333b331161161161333b3333333b3333333b3333333b3333333b3333333
