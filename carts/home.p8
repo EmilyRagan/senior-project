@@ -203,7 +203,7 @@ function _update60()
     then
       if (#current_item.options > 1)
       then
-        alternative_selected = 0
+        alternative_selected = current_item.current - 1
         show_alternatives = true
         return
       elseif (current_item.navigate != nil)
