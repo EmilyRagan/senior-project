@@ -44,6 +44,10 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 50
       },
       {
@@ -53,6 +57,10 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 40
       },
     }
@@ -81,6 +89,10 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 92,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 100
       },
       {
@@ -90,6 +102,10 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 92,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 50
       },
       {
@@ -99,6 +115,10 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 100,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 0
       }
     }
@@ -114,8 +134,10 @@ outdoor_items = {
         sprite_width = 2,
         x = 72,
         y = 108,
-        -- plastic multiplier
-        plastic = 1,
+        plastic = {
+          multiplier = 1,
+          addition = 0
+        },
         carbon = 10
       },
       {
@@ -125,9 +147,11 @@ outdoor_items = {
         sprite_width = 4,
         x = 72,
         y = 108,
-        -- 8.4% recycling rate in 2017, 8.5% in 2018
-        -- plastic multiplier
-        plastic = 0.9,
+        plastic = {
+          -- 8.4% recycling rate in 2017, 8.5% in 2018
+          multiplier = 0.9,
+          addition = 0
+        },
         carbon = 9
       }
     }
@@ -280,19 +304,36 @@ end
 
 function drawHeadsUpDisplay()
   local co2 = 0
+  local plasticBase = 0
+  local plasticMultiplier = 1
   for idx, val in ipairs(outdoor_items)
   do
     local carbonVal = val.options[val.current].carbon
+    local plasticVals = val.options[val.current].plastic
     if (carbonVal != nil)
     then
       co2 += carbonVal
     end
+    if (plasticVals != nil)
+    then
+      local plasticAdd = val.options[val.current].plastic.addition
+      local plasticMult = val.options[val.current].plastic.multiplier
+      if (plasticAdd != nil)
+      then
+        plasticBase += plasticAdd
+      end
+      if (plasticMult != nil)
+      then
+        plasticMultiplier = plasticMultiplier * plasticMult
+      end
+    end
   end
 
   color(0)
-  print('co2', 2, 2)
-  print(co2, 18, 2)
-  -- print('plastic', 2, 10)
+  print('co2', 2, 10)
+  print(co2, 18, 10)
+  print('plastic', 2, 2)
+  print(plasticBase * plasticMultiplier, 34, 2)
 end
 
 function drawInstructions()
