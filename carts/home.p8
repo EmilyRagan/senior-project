@@ -195,11 +195,11 @@ function _update60()
     end
 
     -- logic for navigating around the items in the scene
-    if (not show_alternatives and btnp(buttons.down))
+    if (not show_alternatives and (btnp(buttons.down) or btnp(buttons.left)))
     then
       current_index = current_index % #current_scene + 1
       current_item = current_scene[current_index]
-    elseif (not show_alternatives and btnp(buttons.up))
+    elseif (not show_alternatives and (btnp(buttons.up) or btnp(buttons.right)))
     then
       current_index = (current_index - 2) % #current_scene + 1
       current_item = current_scene[current_index]
