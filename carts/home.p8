@@ -44,11 +44,7 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 50
+        carbon = 5384
       },
       {
         -- solar panels
@@ -57,11 +53,8 @@ outdoor_items = {
         sprite_width = 6,
         x = 38,
         y = 26,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 40
+        -- TODO: more realistic carbon value for how solar panels impact home energy usage
+        carbon = 2500
       },
     }
   },
@@ -89,11 +82,7 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 92,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 100
+        carbon = 11141
       },
       {
         -- electric car
@@ -102,11 +91,8 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 92,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 50
+        -- TODO: find more accurate electric car manufacturing carbon value
+        carbon = 5000
       },
       {
         -- bike
@@ -115,11 +101,8 @@ outdoor_items = {
         sprite_width = 3,
         x = 36,
         y = 100,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 0
+        -- TODO: find more accurate bike manufacturing carbon value
+        carbon = 10
       }
     }
   },
@@ -138,7 +121,7 @@ outdoor_items = {
           multiplier = 1,
           addition = 0
         },
-        carbon = 10
+        carbon = 692
       },
       {
         -- trash and recycling
@@ -152,7 +135,7 @@ outdoor_items = {
           multiplier = 0.9,
           addition = 0
         },
-        carbon = 9
+        carbon = 401
       }
     }
   }
