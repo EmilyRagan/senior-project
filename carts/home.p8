@@ -150,8 +150,10 @@ kitchen_items = {
         sprite_start = 70,
         sprite_height = 4,
         sprite_width = 2,
-        x = 110,
-        y = 40
+        x = 102,
+        y = 32,
+        multiplier = 1.5,
+        flip_x = true
       }
     }
   },
@@ -164,16 +166,18 @@ kitchen_items = {
         sprite_start = 90,
         sprite_height = 3,
         sprite_width = 2,
-        x = 74,
-        y = 48
+        x = 66,
+        y = 44,
+        multiplier = 1.5
       },
       {
         -- electric range
         sprite_start = 92,
         sprite_height = 3,
         sprite_width = 2,
-        x = 74,
-        y = 48
+        x = 66,
+        y = 44,
+        multiplier = 1.5
       }
     }
   },
@@ -186,7 +190,8 @@ kitchen_items = {
         sprite_height = 4,
         sprite_width = 2,
         x = 2,
-        y = 40
+        y = 32,
+        multiplier = 1.5
       }
     }
   }
@@ -290,8 +295,15 @@ function _draw()
     local item = current_item.options[current_item.current]
     local highlight_x = item.x - 1
     local highlight_y = item.y - 1
-    local width = item.sprite_width * 8 + 1
-    local height = item.sprite_height * 8 + 1
+    local width = item.sprite_width * 8
+    local height = item.sprite_height * 8
+    if (item.multiplier != nil)
+    then
+      width = width * item.multiplier
+      height = height * item.multiplier
+    end
+    width = width + 1
+    height = height + 1
     rect(highlight_x, highlight_y, highlight_x + width, highlight_y + height)
   end
 
@@ -379,14 +391,28 @@ function drawKitchen()
 end
 
 function drawSprite(item)
-  -- https://pico-8.fandom.com/wiki/Spr
-  -- spr( n, x, y, [w,] [h,] )
-  -- n (number): starting sprite number
-  -- x (number): x location to start drawing
-  -- y (number): y location to start drawing
-  -- w (number): number of sprites wide
-  -- h (number): number of sprites tall
-  spr(item.sprite_start, item.x, item.y, item.sprite_width, item.sprite_height)
+  -- https://pico-8.fandom.com/wiki/Sspr
+  -- sspr( sx, sy, sw, sh, dx, dy, [dw,] [dh,] [flip_x,] [flip_y] )
+  -- sx: The x coordinate of the upper left corner of the rectangle in the sprite sheet.
+  -- sy: The y coordinate of the upper left corner of the rectangle in the sprite sheet.
+  -- sw: The width of the rectangle in the sprite sheet, as a number of pixels.
+  -- sh: The height of the rectangle in the sprite sheet, as a number of pixels.
+  -- dx: The x coordinate of the upper left corner of the rectangle area of the screen.
+  -- dy: The y coordinate of the upper left corner of the rectangle area of the screen.
+  -- dw: The width of the rectangle area of the screen. The default is to match the image width (sw).
+  -- dh: The height of the rectangle area of the screen. The default is to match the image height (sh).
+  local sx = (item.sprite_start % 16) * 8
+  local sy = (item.sprite_start \ 16) * 8
+  local sw = item.sprite_width * 8
+  local sh = item.sprite_height * 8
+  local dw = sw
+  local dh = sh
+  if (item.multiplier != nil)
+  then
+    dw = dw * item.multiplier
+    dh = dh * item.multiplier
+  end
+  sspr(sx, sy, sw, sh, item.x, item.y, dw, dh, item.flip_x)
 end
 
 function updateOutside()
