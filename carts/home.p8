@@ -32,7 +32,7 @@ show_alternatives = false
 
 -- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
 -- 0 index === nil
-outdoor_items = {
+outdoor_interactives = {
   {
     -- roof options
     current = 1,
@@ -141,7 +141,7 @@ outdoor_items = {
   }
 }
 
-kitchen_items = {
+kitchen_interactives = {
   {
     -- door
     current = 1,
@@ -212,7 +212,7 @@ kitchen_items = {
   },
 }
 
-bathroom_items = {
+bathroom_interactives = {
   {
     -- door
     current = 1,
@@ -230,13 +230,13 @@ bathroom_items = {
 }
 
 -- link the scene transition items
-outdoor_items[2]['navigate'] = kitchen_items
-kitchen_items[1]['navigate'] = outdoor_items
-kitchen_items[4]['navigate'] = bathroom_items
-bathroom_items[1]['navigate'] = kitchen_items
+outdoor_interactives[2]['navigate'] = kitchen_interactives
+kitchen_interactives[1]['navigate'] = outdoor_interactives
+kitchen_interactives[4]['navigate'] = bathroom_interactives
+bathroom_interactives[1]['navigate'] = kitchen_interactives
 
 -- current state of game
-current_scene = bathroom_items
+current_scene = bathroom_interactives
 current_index = 1
 current_item = current_scene[current_index]
 
@@ -247,13 +247,13 @@ function _update60()
   t = time()
   if (not show_instructions)
   then
-    if (current_scene == outdoor_items)
+    if (current_scene == outdoor_interactives)
     then
       updateOutside()
-    elseif (current_scene == kitchen_items)
+    elseif (current_scene == kitchen_interactives)
     then
       updateKitchen()
-    elseif (current_scene == bathroom_items)
+    elseif (current_scene == bathroom_interactives)
     then
       updateBathroom()
     end
@@ -317,13 +317,13 @@ function _draw()
   if (show_instructions)
   then
     drawInstructions()
-  elseif (current_scene == outdoor_items)
+  elseif (current_scene == outdoor_interactives)
   then
     drawOutside()
-  elseif (current_scene == kitchen_items)
+  elseif (current_scene == kitchen_interactives)
   then
     drawKitchen()
-  elseif (current_scene == bathroom_items)
+  elseif (current_scene == bathroom_interactives)
   then
     drawBathroom()
   end
@@ -363,7 +363,7 @@ function drawHeadsUpDisplay()
   local co2 = 0
   local plasticBase = 0
   local plasticMultiplier = 1
-  for idx, val in ipairs(outdoor_items)
+  for idx, val in ipairs(outdoor_interactives)
   do
     local carbonVal = val.options[val.current].carbon
     local plasticVals = val.options[val.current].plastic
@@ -416,7 +416,7 @@ end
 
 function drawOutside()
   map(0, 0, 0, 0, 16, 16)
-  for key, value in ipairs(outdoor_items)
+  for key, value in ipairs(outdoor_interactives)
   do
     drawSprite(value.options[value.current])
   end
@@ -424,7 +424,7 @@ end
 
 function drawKitchen()
   map(16, 0, 0, 0, 16, 16)
-  for key, value in ipairs(kitchen_items)
+  for key, value in ipairs(kitchen_interactives)
   do
     drawSprite(value.options[value.current])
   end
@@ -432,7 +432,7 @@ end
 
 function drawBathroom()
   map(32, 0, 0, 0, 16, 16)
-  for key, value in ipairs(bathroom_items)
+  for key, value in ipairs(bathroom_interactives)
   do
     drawSprite(value.options[value.current])
   end
