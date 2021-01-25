@@ -281,7 +281,7 @@ kitchen_interactives[4]['navigate'] = bathroom_interactives
 bathroom_interactives[1]['navigate'] = kitchen_interactives
 
 -- current state of game
-current_scene = bathroom_interactives
+current_scene = outdoor_interactives
 current_index = 1
 current_item = current_scene[current_index]
 
