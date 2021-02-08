@@ -431,6 +431,8 @@ function drawHeadsUpDisplay()
     end
   end
 
+  color(7)
+  rectfill(0, 0, 40, 16)
   color(0)
   print('co2', 2, 10)
   print(co2, 18, 10)
