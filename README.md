@@ -11,3 +11,5 @@ According to the [EPA's Carbon Footprint Calculator](https://www3.epa.gov/carbon
  * Electricity: "5,384 pounds of CO2 is about average for a household of one person over a year."
  * Fuel oil: "4,848 pounds of CO2 is about average for a household of one person over a year."
  * Propane: "2,243 pounds of CO2 is about average for a household of one person over a year."
+
+Carbon footprint info from [food](https://interactive.carbonbrief.org/what-is-the-climate-impact-of-eating-meat-and-dairy/)
