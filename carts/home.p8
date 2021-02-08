@@ -432,31 +432,36 @@ function drawHeadsUpDisplay()
   local co2 = 0
   local plasticBase = 0
   local plasticMultiplier = 1
-  for idx, val in ipairs(outdoor_interactives)
+  local lists = {outdoor_interactives, kitchen_interactives, bathroom_interactives, refrigerator_interactives}
+  for i = 1, 4
   do
-    local carbonVal = val.options[val.current].carbon
-    local plasticVals = val.options[val.current].plastic
-    if (carbonVal != nil)
-    then
-      co2 += carbonVal
-    end
-    if (plasticVals != nil)
-    then
-      local plasticAdd = val.options[val.current].plastic.addition
-      local plasticMult = val.options[val.current].plastic.multiplier
-      if (plasticAdd != nil)
+    local list = lists[i]
+    for idx, val in ipairs(list)
+    do
+      local carbonVal = val.options[val.current].carbon
+      local plasticVals = val.options[val.current].plastic
+      if (carbonVal != nil)
       then
-        plasticBase += plasticAdd
+        co2 += carbonVal
       end
-      if (plasticMult != nil)
+      if (plasticVals != nil)
       then
-        plasticMultiplier = plasticMultiplier * plasticMult
+        local plasticAdd = val.options[val.current].plastic.addition
+        local plasticMult = val.options[val.current].plastic.multiplier
+        if (plasticAdd != nil)
+        then
+          plasticBase += plasticAdd
+        end
+        if (plasticMult != nil)
+        then
+          plasticMultiplier = plasticMultiplier * plasticMult
+        end
       end
     end
   end
 
   color(7)
-  rectfill(0, 0, 40, 16)
+  rectfill(0, 0, 48, 16)
   color(0)
   print('co2', 2, 10)
   print(co2, 18, 10)
