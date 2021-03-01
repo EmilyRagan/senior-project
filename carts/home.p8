@@ -29,6 +29,11 @@ t = 0
 -- initial display values
 show_instructions = true
 show_alternatives = false
+show_settings = false
+
+-- settings
+num_cars = 1
+num_people = 1
 
 -- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
 -- 0 index === nil
@@ -44,7 +49,7 @@ outdoor_interactives = {
         sprite_width = 6,
         x = 38,
         y = 26,
-        carbon = 5384
+        carbon = 5384 * num_people
       },
       {
         -- solar panels
@@ -54,7 +59,7 @@ outdoor_interactives = {
         x = 38,
         y = 26,
         -- TODO: more realistic carbon value for how solar panels impact home energy usage
-        carbon = 2500
+        carbon = 2500 * num_people
       },
     }
   },
@@ -82,7 +87,7 @@ outdoor_interactives = {
         sprite_width = 3,
         x = 36,
         y = 92,
-        carbon = 11141
+        carbon = 11141 * num_cars
       },
       {
         -- electric car
@@ -92,7 +97,7 @@ outdoor_interactives = {
         x = 36,
         y = 92,
         -- TODO: find more accurate electric car manufacturing carbon value
-        carbon = 5000
+        carbon = 5000 * num_cars
       },
       {
         -- bike
@@ -102,7 +107,7 @@ outdoor_interactives = {
         x = 36,
         y = 100,
         -- TODO: find more accurate bike manufacturing carbon value
-        carbon = 10
+        carbon = 10 * num_cars
       }
     }
   },
@@ -121,7 +126,7 @@ outdoor_interactives = {
           multiplier = 1,
           addition = 0
         },
-        carbon = 692
+        carbon = 692 * num_people
       },
       {
         -- trash and recycling
@@ -135,7 +140,7 @@ outdoor_interactives = {
           multiplier = 0.9,
           addition = 0
         },
-        carbon = 401
+        carbon = 401 * num_people
       }
     }
   }
@@ -225,7 +230,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 1.5,
-        carbon = 59.6, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+        carbon = 59.6 * num_people, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
       },
       {
         -- poultry
@@ -235,7 +240,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 2,
-        carbon = 6.1, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+        carbon = 6.1 * num_people, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
       }
     }
   },
@@ -265,7 +270,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 2.8, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 2.8 * num_people, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- also plastic value?
       },
       {
@@ -276,7 +281,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 1, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 1 * num_people, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- plastic value?
       }
     }
@@ -438,6 +443,9 @@ function _draw()
   if (show_instructions)
   then
     drawInstructions()
+  elseif (show_settings)
+  then
+    drawSettings()
   elseif (current_scene == outdoor_interactives)
   then
     drawOutside()
@@ -453,7 +461,7 @@ function _draw()
   end
 
   -- flash highlight on and off
-  if (not show_instructions and t % 2 < 1 and not show_alternatives)
+  if (not show_instructions and t % 2 < 1 and not show_alternatives and not show_settings)
   then
     color(14)
     local item = current_item.options[current_item.current]
@@ -477,7 +485,7 @@ function _draw()
     drawAlternativeSelection(current_item)
   end
 
-  if (not show_instructions)
+  if (not show_instructions and not show_settings)
   then
     drawHeadsUpDisplay()
   end
@@ -537,12 +545,26 @@ function drawInstructions()
   print('alternatives.', 12, 60)
   print('press z to select', 12, 76)
   print('press x to cancel', 12, 84)
+  print('press z to change settings', hcenter('press z to change settings'), 102)
   print('press x to start', hcenter('press x to start'), 110)
   if (btnp(buttons.x))
   then
     show_instructions = false
     _draw()
+  elseif (btnp(buttons.o))
+  then
+    show_instructions = false
+    show_settings = true
+    _draw()
   end
+end
+
+function drawSettings()
+  color(6)
+  rectfill(8, 8, 120, 120)
+  color(0)
+  print('number of people', 12, 12)
+  print('number of cars', 12, 20)
 end
 
 function drawOutside()
