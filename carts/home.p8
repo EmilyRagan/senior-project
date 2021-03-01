@@ -33,11 +33,11 @@ show_settings = false
 
 -- settings
 settings = {
-  cars = {
+  {
     label = 'number of cars',
     value = 1
   },
-  people = {
+  {
     label = 'number of people',
     value = 1
   }
@@ -57,7 +57,7 @@ outdoor_interactives = {
         sprite_width = 6,
         x = 38,
         y = 26,
-        carbon = 5384 * settings.people.value
+        carbon = 5384 * settings[2].value
       },
       {
         -- solar panels
@@ -67,7 +67,7 @@ outdoor_interactives = {
         x = 38,
         y = 26,
         -- TODO: more realistic carbon value for how solar panels impact home energy usage
-        carbon = 2500 * settings.people.value
+        carbon = 2500 * settings[2].value
       },
     }
   },
@@ -95,7 +95,7 @@ outdoor_interactives = {
         sprite_width = 3,
         x = 36,
         y = 92,
-        carbon = 11141 * settings.cars.value
+        carbon = 11141 * settings[1].value
       },
       {
         -- electric car
@@ -105,7 +105,7 @@ outdoor_interactives = {
         x = 36,
         y = 92,
         -- TODO: find more accurate electric car manufacturing carbon value
-        carbon = 5000 * settings.cars.value
+        carbon = 5000 * settings[1].value
       },
       {
         -- bike
@@ -115,7 +115,7 @@ outdoor_interactives = {
         x = 36,
         y = 100,
         -- TODO: find more accurate bike manufacturing carbon value
-        carbon = 10 * settings.cars.value
+        carbon = 10 * settings[1].value
       }
     }
   },
@@ -134,7 +134,7 @@ outdoor_interactives = {
           multiplier = 1,
           addition = 0
         },
-        carbon = 692 * settings.people.value
+        carbon = 692 * settings[2].value
       },
       {
         -- trash and recycling
@@ -148,7 +148,7 @@ outdoor_interactives = {
           multiplier = 0.9,
           addition = 0
         },
-        carbon = 401 * settings.people.value
+        carbon = 401 * settings[2].value
       }
     }
   }
@@ -238,7 +238,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 1.5,
-        carbon = 59.6 * settings.people.value, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+        carbon = 59.6 * settings[2].value, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
       },
       {
         -- poultry
@@ -248,7 +248,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 2,
-        carbon = 6.1 * settings.people.value, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+        carbon = 6.1 * settings[2].value, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
       }
     }
   },
@@ -278,7 +278,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 2.8 * settings.people.value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 2.8 * settings[2].value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- also plastic value?
       },
       {
@@ -289,7 +289,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 1 * settings.people.value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 1 * settings[2].value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- plastic value?
       }
     }
@@ -372,6 +372,7 @@ current_index = 1
 current_item = current_scene[current_index]
 
 alternative_selected = 0
+setting_selected = 1
 
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
@@ -570,20 +571,48 @@ end
 function drawSettings()
   color(6)
   rectfill(8, 8, 120, 120)
-  color(0)
   local height = 12
-  for key, value in pairs(settings)
+  for key, value in ipairs(settings)
   do
+    color(0)
+    if (key == setting_selected)
+    then
+      color(14)
+      print('-', 100, height)
+      print('+', 116, height)
+    end
     print(value.label, 12, height)
     print(value.value, 108, height)
-    height = height + 8
+    height = height + 10
   end
+  color(0)
   print('press x to start', hcenter('press x to start'), 110)
 
   if (btnp(buttons.x))
   then
     show_settings = false
     _draw()
+  elseif (btnp(buttons.left))
+  then
+    if (settings[setting_selected].value > 1)
+    then
+      settings[setting_selected].value = settings[setting_selected].value - 1
+    end
+  elseif (btnp(buttons.right))
+  then
+    settings[setting_selected].value = settings[setting_selected].value + 1
+  elseif (btnp(buttons.up))
+  then
+    if (setting_selected > 1)
+    then
+      setting_selected = setting_selected - 1
+    end
+  elseif (btnp(buttons.down))
+  then
+    if (setting_selected < #settings)
+    then
+      setting_selected = setting_selected + 1
+    end
   end
 end
 
