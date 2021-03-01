@@ -32,8 +32,16 @@ show_alternatives = false
 show_settings = false
 
 -- settings
-num_cars = 1
-num_people = 1
+settings = {
+  cars = {
+    label = 'number of cars',
+    value = 1
+  },
+  people = {
+    label = 'number of people',
+    value = 1
+  }
+}
 
 -- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
 -- 0 index === nil
@@ -49,7 +57,7 @@ outdoor_interactives = {
         sprite_width = 6,
         x = 38,
         y = 26,
-        carbon = 5384 * num_people
+        carbon = 5384 * settings.people.value
       },
       {
         -- solar panels
@@ -59,7 +67,7 @@ outdoor_interactives = {
         x = 38,
         y = 26,
         -- TODO: more realistic carbon value for how solar panels impact home energy usage
-        carbon = 2500 * num_people
+        carbon = 2500 * settings.people.value
       },
     }
   },
@@ -87,7 +95,7 @@ outdoor_interactives = {
         sprite_width = 3,
         x = 36,
         y = 92,
-        carbon = 11141 * num_cars
+        carbon = 11141 * settings.cars.value
       },
       {
         -- electric car
@@ -97,7 +105,7 @@ outdoor_interactives = {
         x = 36,
         y = 92,
         -- TODO: find more accurate electric car manufacturing carbon value
-        carbon = 5000 * num_cars
+        carbon = 5000 * settings.cars.value
       },
       {
         -- bike
@@ -107,7 +115,7 @@ outdoor_interactives = {
         x = 36,
         y = 100,
         -- TODO: find more accurate bike manufacturing carbon value
-        carbon = 10 * num_cars
+        carbon = 10 * settings.cars.value
       }
     }
   },
@@ -126,7 +134,7 @@ outdoor_interactives = {
           multiplier = 1,
           addition = 0
         },
-        carbon = 692 * num_people
+        carbon = 692 * settings.people.value
       },
       {
         -- trash and recycling
@@ -140,7 +148,7 @@ outdoor_interactives = {
           multiplier = 0.9,
           addition = 0
         },
-        carbon = 401 * num_people
+        carbon = 401 * settings.people.value
       }
     }
   }
@@ -230,7 +238,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 1.5,
-        carbon = 59.6 * num_people, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+        carbon = 59.6 * settings.people.value, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
       },
       {
         -- poultry
@@ -240,7 +248,7 @@ refrigerator_interactives = {
         x = 20,
         y = 20,
         multiplier = 2,
-        carbon = 6.1 * num_people, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+        carbon = 6.1 * settings.people.value, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
       }
     }
   },
@@ -270,7 +278,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 2.8 * num_people, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 2.8 * settings.people.value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- also plastic value?
       },
       {
@@ -281,7 +289,7 @@ refrigerator_interactives = {
         x = 60,
         y = 12,
         multiplier = 2,
-        carbon = 1 * num_people, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+        carbon = 1 * settings.people.value, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
         -- plastic value?
       }
     }
@@ -564,7 +572,9 @@ function drawSettings()
   rectfill(8, 8, 120, 120)
   color(0)
   print('number of people', 12, 12)
+  print(settings.people.value, 108, 12)
   print('number of cars', 12, 20)
+  print(settings.cars.value, 108, 20)
 end
 
 function drawOutside()
