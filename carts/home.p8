@@ -571,10 +571,13 @@ function drawSettings()
   color(6)
   rectfill(8, 8, 120, 120)
   color(0)
-  print('number of people', 12, 12)
-  print(settings.people.value, 108, 12)
-  print('number of cars', 12, 20)
-  print(settings.cars.value, 108, 20)
+  local height = 12
+  for key, value in pairs(settings)
+  do
+    print(value.label, 12, height)
+    print(value.value, 108, height)
+    height = height + 8
+  end
   print('press x to start', hcenter('press x to start'), 110)
 
   if (btnp(buttons.x))
