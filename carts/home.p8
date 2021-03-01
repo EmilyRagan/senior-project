@@ -376,7 +376,7 @@ alternative_selected = 0
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
-  if (not show_instructions)
+  if (not show_instructions and not show_settings)
   then
     if (current_scene == outdoor_interactives)
     then
@@ -575,6 +575,13 @@ function drawSettings()
   print(settings.people.value, 108, 12)
   print('number of cars', 12, 20)
   print(settings.cars.value, 108, 20)
+  print('press x to start', hcenter('press x to start'), 110)
+
+  if (btnp(buttons.x))
+  then
+    show_settings = false
+    _draw()
+  end
 end
 
 function drawOutside()
