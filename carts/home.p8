@@ -35,10 +35,12 @@ show_settings = false
 settings = {
   {
     label = 'number of cars',
+    minimum = 0,
     value = 1
   },
   {
     label = 'number of people',
+    minimum = 1,
     value = 1
   }
 }
@@ -578,7 +580,10 @@ function drawSettings()
     if (key == setting_selected)
     then
       color(14)
+      if (value.value > value.minimum)
+      then
       print('-', 100, height)
+      end
       print('+', 116, height)
     end
     print(value.label, 12, height)
@@ -594,7 +599,7 @@ function drawSettings()
     _draw()
   elseif (btnp(buttons.left))
   then
-    if (settings[setting_selected].value > 1)
+    if (settings[setting_selected].value > settings[setting_selected].minimum)
     then
       settings[setting_selected].value = settings[setting_selected].value - 1
     end
