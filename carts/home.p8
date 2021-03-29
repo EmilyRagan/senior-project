@@ -60,7 +60,10 @@ function setDefaultData()
           sprite_width = 6,
           x = 38,
           y = 26,
-          carbon = flr(5384 * settings[2].value)
+          carbon = {
+            addition = 5384,
+            multiplier = settings[2].value
+          }
         },
         {
           -- solar panels
@@ -70,7 +73,10 @@ function setDefaultData()
           x = 38,
           y = 26,
           -- TODO: more realistic carbon value for how solar panels impact home energy usage
-          carbon = flr(2500 * settings[2].value)
+          carbon = {
+            addition = 2500,
+            multiplier = settings[2].value
+          }
         },
       }
     },
@@ -98,7 +104,10 @@ function setDefaultData()
           sprite_width = 3,
           x = 36,
           y = 92,
-          carbon = flr(11141 * settings[1].value)
+          carbon = {
+            addition = 11141,
+            multiplier = settings[1].value
+          }
         },
         {
           -- electric car
@@ -108,7 +117,10 @@ function setDefaultData()
           x = 36,
           y = 92,
           -- TODO: find more accurate electric car manufacturing carbon value
-          carbon = flr(5000 * settings[1].value)
+          carbon = {
+            addition = 5000,
+            multiplier = settings[1].value
+          }
         },
         {
           -- bike
@@ -118,7 +130,10 @@ function setDefaultData()
           x = 36,
           y = 100,
           -- TODO: find more accurate bike manufacturing carbon value
-          carbon = flr(10 * settings[1].value)
+          carbon = {
+            addition = 10,
+            multiplier = settings[1].value
+          }
         }
       }
     },
@@ -137,7 +152,10 @@ function setDefaultData()
             multiplier = 1,
             addition = 0
           },
-          carbon = flr(692 * settings[2].value)
+          carbon = {
+            addition = 692,
+            multiplier = settings[2].value
+          }
         },
         {
           -- trash and recycling
@@ -151,7 +169,10 @@ function setDefaultData()
             multiplier = 0.9,
             addition = 0
           },
-          carbon = flr(401 * settings[2].value)
+          carbon = {
+            addition = 401,
+            multiplier = settings[2].value
+          }
         }
       }
     }
@@ -241,7 +262,11 @@ function setDefaultData()
           x = 20,
           y = 20,
           multiplier = 1.5,
-          carbon = flr(59.6 * settings[2].value), -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+          carbon = {
+            -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+            addition = 59.6,
+            multiplier = settings[2].value
+          }
         },
         {
           -- poultry
@@ -251,7 +276,11 @@ function setDefaultData()
           x = 20,
           y = 20,
           multiplier = 2,
-          carbon = flr(6.1 * settings[2].value), -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+          carbon = {
+            -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+            addition = 6.1,
+            multiplier = settings[2].value
+          }
         }
       }
     },
@@ -281,7 +310,11 @@ function setDefaultData()
           x = 60,
           y = 12,
           multiplier = 2,
-          carbon = flr(2.8 * settings[2].value), -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+          carbon = {
+            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+            addition = 2.8,
+            multiplier = settings[2].value
+          }
           -- also plastic value?
         },
         {
@@ -292,7 +325,11 @@ function setDefaultData()
           x = 60,
           y = 12,
           multiplier = 2,
-          carbon = flr(1 * settings[2].value), -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+          carbon = {
+            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+            addition = 1,
+            multiplier = settings[2].value
+          }
           -- plastic value?
         }
       }
@@ -506,6 +543,7 @@ end
 
 function drawHeadsUpDisplay()
   local co2 = 0
+  local co2X1000 = 0
   local plasticBase = 0
   local plasticMultiplier = 1
   local lists = {outdoor_interactives, kitchen_interactives, bathroom_interactives, refrigerator_interactives}
@@ -514,16 +552,35 @@ function drawHeadsUpDisplay()
     local list = lists[i]
     for idx, val in ipairs(list)
     do
-      local carbonVal = val.options[val.current].carbon
+      local carbonVals = val.options[val.current].carbon
       local plasticVals = val.options[val.current].plastic
-      if (carbonVal != nil)
+      if (carbonVals != nil)
       then
-        co2 += carbonVal
+        local carbonAdd = carbonVals.addition
+        local carbonMult = carbonVals.multiplier
+        if (carbonMult != nil)
+        then
+          carbonMult = 1
+        end
+        if (carbonAdd != nil)
+        then
+          for i = 1, carbonMult
+          do
+            co2 += carbonAdd
+            if (co2 > 1000)
+            then
+              local thousands = flr(co2 / 1000)
+              local underThousand = co2 - (1000 * thousands)
+              co2X1000 += thousands
+              co2 = underThousand
+            end
+          end
+        end
       end
       if (plasticVals != nil)
       then
-        local plasticAdd = val.options[val.current].plastic.addition
-        local plasticMult = val.options[val.current].plastic.multiplier
+        local plasticAdd = plasticVals.addition
+        local plasticMult = plasticVals.multiplier
         if (plasticAdd != nil)
         then
           plasticBase += plasticAdd
@@ -537,12 +594,10 @@ function drawHeadsUpDisplay()
   end
 
   color(7)
-  rectfill(0, 0, 48, 16)
+  rectfill(0, 0, 52, 16)
   color(0)
-  print('co2', 2, 10)
-  print(co2, 18, 10)
-  print('plastic', 2, 2)
-  print(plasticBase * plasticMultiplier, 34, 2)
+  print('plastic '..plasticBase * plasticMultiplier, 2, 2)
+  print('co2 '..co2X1000..','..co2, 2, 10)
 end
 
 function drawInstructions()
