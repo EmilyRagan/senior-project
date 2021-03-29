@@ -29,341 +29,396 @@ t = 0
 -- initial display values
 show_instructions = true
 show_alternatives = false
+show_settings = false
 
--- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
--- 0 index === nil
-outdoor_interactives = {
+-- settings
+settings = {
   {
-    -- roof options
-    current = 1,
-    options = {
-      {
-        -- nothing
-        sprite_start = 192,
-        sprite_height = 2,
-        sprite_width = 6,
-        x = 38,
-        y = 26,
-        carbon = 5384
-      },
-      {
-        -- solar panels
-        sprite_start = 64,
-        sprite_height = 2,
-        sprite_width = 6,
-        x = 38,
-        y = 26,
-        -- TODO: more realistic carbon value for how solar panels impact home energy usage
-        carbon = 2500
-      },
-    }
+    label = 'number of cars',
+    minimum = 0,
+    value = 1
   },
   {
-    -- door
-    current = 1,
-    options = {
-      {
-        sprite_start = 70,
-        sprite_height = 4,
-        sprite_width = 2,
-        x = 80,
-        y = 56
-      }
-    }
-  },
-  {
-    -- car options
-    current = 1,
-    options = {
-      {
-        -- gas car
-        sprite_start = 19,
-        sprite_height = 3,
-        sprite_width = 3,
-        x = 36,
-        y = 92,
-        carbon = 11141
-      },
-      {
-        -- electric car
-        sprite_start = 16,
-        sprite_height = 3,
-        sprite_width = 3,
-        x = 36,
-        y = 92,
-        -- TODO: find more accurate electric car manufacturing carbon value
-        carbon = 5000
-      },
-      {
-        -- bike
-        sprite_start = 38,
-        sprite_height = 2,
-        sprite_width = 3,
-        x = 36,
-        y = 100,
-        -- TODO: find more accurate bike manufacturing carbon value
-        carbon = 10
-      }
-    }
-  },
-  {
-    -- trash options
-    current = 1,
-    options = {
-      {
-        -- trash
-        sprite_start = 7,
-        sprite_height = 2,
-        sprite_width = 2,
-        x = 72,
-        y = 108,
-        plastic = {
-          multiplier = 1,
-          addition = 0
-        },
-        carbon = 692
-      },
-      {
-        -- trash and recycling
-        sprite_start = 7,
-        sprite_height = 2,
-        sprite_width = 4,
-        x = 72,
-        y = 108,
-        plastic = {
-          -- 8.4% recycling rate in 2017, 8.5% in 2018
-          multiplier = 0.9,
-          addition = 0
-        },
-        carbon = 401
-      }
-    }
+    label = 'number of people',
+    minimum = 1,
+    value = 1
   }
 }
 
-kitchen_interactives = {
-  {
-    -- door
-    current = 1,
-    options = {
-      {
-        sprite_start = 70,
-        sprite_height = 4,
-        sprite_width = 2,
-        x = 102,
-        y = 32,
-        multiplier = 1.5,
-        flip_x = true
+function setDefaultData()
+  -- arrays in Lua are 1-indexed, so 1st thing in options list is index 1
+  -- 0 index === nil
+  outdoor_interactives = {
+    {
+      -- roof options
+      current = 1,
+      options = {
+        {
+          -- nothing
+          sprite_start = 192,
+          sprite_height = 2,
+          sprite_width = 6,
+          x = 38,
+          y = 26,
+          carbon = {
+            addition = 5384,
+            multiplier = settings[2].value
+          }
+        },
+        {
+          -- solar panels
+          sprite_start = 64,
+          sprite_height = 2,
+          sprite_width = 6,
+          x = 38,
+          y = 26,
+          -- TODO: more realistic carbon value for how solar panels impact home energy usage
+          carbon = {
+            addition = 2500,
+            multiplier = settings[2].value
+          }
+        },
       }
-    }
-  },
-  {
-    -- range
-    current = 1,
-    options = {
-      {
-        -- gas range
-        sprite_start = 90,
-        sprite_height = 3,
-        sprite_width = 2,
-        x = 66,
-        y = 44,
-        multiplier = 1.5
-      },
-      {
-        -- electric range
-        sprite_start = 92,
-        sprite_height = 3,
-        sprite_width = 2,
-        x = 66,
-        y = 44,
-        multiplier = 1.5
+    },
+    {
+      -- door
+      current = 1,
+      options = {
+        {
+          sprite_start = 70,
+          sprite_height = 4,
+          sprite_width = 2,
+          x = 80,
+          y = 56
+        }
       }
-    }
-  },
-  {
-    -- fridge
-    current = 1,
-    options = {
-      {
-        sprite_start = 72,
-        sprite_height = 4,
-        sprite_width = 2,
-        x = 28,
-        y = 32,
-        multiplier = 1.5
+    },
+    {
+      -- car options
+      current = 1,
+      options = {
+        {
+          -- gas car
+          sprite_start = 19,
+          sprite_height = 3,
+          sprite_width = 3,
+          x = 36,
+          y = 92,
+          carbon = {
+            addition = 11141,
+            multiplier = settings[1].value
+          }
+        },
+        {
+          -- electric car
+          sprite_start = 16,
+          sprite_height = 3,
+          sprite_width = 3,
+          x = 36,
+          y = 92,
+          -- TODO: find more accurate electric car manufacturing carbon value
+          carbon = {
+            addition = 5000,
+            multiplier = settings[1].value
+          }
+        },
+        {
+          -- bike
+          sprite_start = 38,
+          sprite_height = 2,
+          sprite_width = 3,
+          x = 36,
+          y = 100,
+          -- TODO: find more accurate bike manufacturing carbon value
+          carbon = {
+            addition = 10,
+            multiplier = settings[1].value
+          }
+        }
       }
-    }
-  },
-  {
-    -- door
-    current = 1,
-    options = {
-      {
-        sprite_start = 70,
-        sprite_height = 4,
-        sprite_width = 2,
-        x = 2,
-        y = 32,
-        multiplier = 1.5,
-        flip_x = true
-      }
-    }
-  },
-}
-
-refrigerator_interactives = {
-  {
-    -- meat
-    current = 1,
-    options = {
-      {
-        -- beef
-        sprite_start = 96,
-        sprite_width = 2,
-        sprite_height = 2,
-        x = 20,
-        y = 20,
-        multiplier = 1.5,
-        carbon = 59.6, -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
-      },
-      {
-        -- poultry
-        sprite_start = 41,
-        sprite_width = 1,
-        sprite_height = 1,
-        x = 20,
-        y = 20,
-        multiplier = 2,
-        carbon = 6.1, -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
-      }
-    }
-  },
-  {
-    -- handle for exit
-    current = 1,
-    options = {
-      {
-        sprite_start = 42,
-        sprite_height = 2,
-        sprite_width = 1,
-        x = 0,
-        y = 40,
-        multiplier = 2
-      }
-    }
-  },
-  {
-    -- milk
-    current = 1,
-    options = {
-      {
-        -- cow milk
-        sprite_start = 110,
-        sprite_width = 2,
-        sprite_height = 2,
-        x = 60,
-        y = 12,
-        multiplier = 2,
-        carbon = 2.8, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
-        -- also plastic value?
-      },
-      {
-        -- soy milk
-        sprite_start = 98,
-        sprite_width = 2,
-        sprite_height = 2,
-        x = 60,
-        y = 12,
-        multiplier = 2,
-        carbon = 1, -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
-        -- plastic value?
+    },
+    {
+      -- trash options
+      current = 1,
+      options = {
+        {
+          -- trash
+          sprite_start = 7,
+          sprite_height = 2,
+          sprite_width = 2,
+          x = 72,
+          y = 108,
+          plastic = {
+            multiplier = 1,
+            addition = 0
+          },
+          carbon = {
+            addition = 692,
+            multiplier = settings[2].value
+          }
+        },
+        {
+          -- trash and recycling
+          sprite_start = 7,
+          sprite_height = 2,
+          sprite_width = 4,
+          x = 72,
+          y = 108,
+          plastic = {
+            -- 8.4% recycling rate in 2017, 8.5% in 2018
+            multiplier = 0.9,
+            addition = 0
+          },
+          carbon = {
+            addition = 401,
+            multiplier = settings[2].value
+          }
+        }
       }
     }
   }
-}
 
-bathroom_interactives = {
-  {
-    -- door
-    current = 1,
-    options = {
-      {
-        sprite_start = 70,
-        sprite_height = 4,
-        sprite_width = 2,
-        x = 2,
-        y = 32,
-        multiplier = 1.5
+  kitchen_interactives = {
+    {
+      -- door
+      current = 1,
+      options = {
+        {
+          sprite_start = 70,
+          sprite_height = 4,
+          sprite_width = 2,
+          x = 102,
+          y = 32,
+          multiplier = 1.5,
+          flip_x = true
+        }
+      }
+    },
+    {
+      -- range
+      current = 1,
+      options = {
+        {
+          -- gas range
+          sprite_start = 90,
+          sprite_height = 3,
+          sprite_width = 2,
+          x = 66,
+          y = 44,
+          multiplier = 1.5
+        },
+        {
+          -- electric range
+          sprite_start = 92,
+          sprite_height = 3,
+          sprite_width = 2,
+          x = 66,
+          y = 44,
+          multiplier = 1.5
+        }
+      }
+    },
+    {
+      -- fridge
+      current = 1,
+      options = {
+        {
+          sprite_start = 72,
+          sprite_height = 4,
+          sprite_width = 2,
+          x = 28,
+          y = 32,
+          multiplier = 1.5
+        }
+      }
+    },
+    {
+      -- door
+      current = 1,
+      options = {
+        {
+          sprite_start = 70,
+          sprite_height = 4,
+          sprite_width = 2,
+          x = 2,
+          y = 32,
+          multiplier = 1.5,
+          flip_x = true
+        }
+      }
+    },
+  }
+
+  refrigerator_interactives = {
+    {
+      -- meat
+      current = 1,
+      options = {
+        {
+          -- beef
+          sprite_start = 96,
+          sprite_width = 2,
+          sprite_height = 2,
+          x = 20,
+          y = 20,
+          multiplier = 1.5,
+          carbon = {
+            -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
+            addition = 59.6,
+            multiplier = settings[2].value
+          }
+        },
+        {
+          -- poultry
+          sprite_start = 41,
+          sprite_width = 1,
+          sprite_height = 1,
+          x = 20,
+          y = 20,
+          multiplier = 2,
+          carbon = {
+            -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
+            addition = 6.1,
+            multiplier = settings[2].value
+          }
+        }
+      }
+    },
+    {
+      -- handle for exit
+      current = 1,
+      options = {
+        {
+          sprite_start = 42,
+          sprite_height = 2,
+          sprite_width = 1,
+          x = 0,
+          y = 40,
+          multiplier = 2
+        }
+      }
+    },
+    {
+      -- milk
+      current = 1,
+      options = {
+        {
+          -- cow milk
+          sprite_start = 110,
+          sprite_width = 2,
+          sprite_height = 2,
+          x = 60,
+          y = 12,
+          multiplier = 2,
+          carbon = {
+            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+            addition = 2.8,
+            multiplier = settings[2].value
+          }
+          -- also plastic value?
+        },
+        {
+          -- soy milk
+          sprite_start = 98,
+          sprite_width = 2,
+          sprite_height = 2,
+          x = 60,
+          y = 12,
+          multiplier = 2,
+          carbon = {
+            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
+            addition = 1,
+            multiplier = settings[2].value
+          }
+          -- plastic value?
+        }
       }
     }
-  },
-}
+  }
 
-bathroom_static = {
-  {
-    -- toilet
-    current = 1,
-    options = {
-      {
-        sprite_start = 108,
-        sprite_height = 2,
-        sprite_width = 2,
-        x = 80,
-        y = 56,
-        multiplier = 2
+  bathroom_interactives = {
+    {
+      -- door
+      current = 1,
+      options = {
+        {
+          sprite_start = 70,
+          sprite_height = 4,
+          sprite_width = 2,
+          x = 2,
+          y = 32,
+          multiplier = 1.5
+        }
       }
-    }
-  },
-  {
-    -- toilet paper
-    current = 1,
-    options = {
-      {
-        sprite_start = 30,
-        sprite_height = 1,
-        sprite_width = 1,
-        x = 108,
-        y = 60,
-        multiplier = 1.5
-      }
-    }
-  },
-  {
-    -- toilet paper holder
-    current = 1,
-    options = {
-      {
-        sprite_start = 76,
-        sprite_height = 2,
-        sprite_width = 1,
-        x = 108,
-        y = 56,
-        multiplier = 2
-      }
-    }
-  },
-}
+    },
+  }
 
--- link the scene transition items
-outdoor_interactives[2]['navigate'] = kitchen_interactives
-kitchen_interactives[1]['navigate'] = outdoor_interactives
-kitchen_interactives[3]['navigate'] = refrigerator_interactives
-kitchen_interactives[4]['navigate'] = bathroom_interactives
-refrigerator_interactives[2]['navigate'] = kitchen_interactives
-bathroom_interactives[1]['navigate'] = kitchen_interactives
+  bathroom_static = {
+    {
+      -- toilet
+      current = 1,
+      options = {
+        {
+          sprite_start = 108,
+          sprite_height = 2,
+          sprite_width = 2,
+          x = 80,
+          y = 56,
+          multiplier = 2
+        }
+      }
+    },
+    {
+      -- toilet paper
+      current = 1,
+      options = {
+        {
+          sprite_start = 30,
+          sprite_height = 1,
+          sprite_width = 1,
+          x = 108,
+          y = 60,
+          multiplier = 1.5
+        }
+      }
+    },
+    {
+      -- toilet paper holder
+      current = 1,
+      options = {
+        {
+          sprite_start = 76,
+          sprite_height = 2,
+          sprite_width = 1,
+          x = 108,
+          y = 56,
+          multiplier = 2
+        }
+      }
+    },
+  }
 
--- current state of game
-current_scene = outdoor_interactives
-current_index = 1
-current_item = current_scene[current_index]
+  -- link the scene transition items
+  outdoor_interactives[2]['navigate'] = kitchen_interactives
+  kitchen_interactives[1]['navigate'] = outdoor_interactives
+  kitchen_interactives[3]['navigate'] = refrigerator_interactives
+  kitchen_interactives[4]['navigate'] = bathroom_interactives
+  refrigerator_interactives[2]['navigate'] = kitchen_interactives
+  bathroom_interactives[1]['navigate'] = kitchen_interactives
+
+  -- current state of game
+  current_scene = outdoor_interactives
+  current_index = 1
+  current_item = current_scene[current_index]
+end
 
 alternative_selected = 0
+setting_selected = 1
 
 -- logic in update function avoids frame drops and weird button behaviors
 function _update60()
   t = time()
-  if (not show_instructions)
+  if (not show_instructions and not show_settings)
   then
     if (current_scene == outdoor_interactives)
     then
@@ -438,6 +493,9 @@ function _draw()
   if (show_instructions)
   then
     drawInstructions()
+  elseif (show_settings)
+  then
+    drawSettings()
   elseif (current_scene == outdoor_interactives)
   then
     drawOutside()
@@ -453,7 +511,7 @@ function _draw()
   end
 
   -- flash highlight on and off
-  if (not show_instructions and t % 2 < 1 and not show_alternatives)
+  if (not show_instructions and t % 2 < 1 and not show_alternatives and not show_settings)
   then
     color(14)
     local item = current_item.options[current_item.current]
@@ -477,7 +535,7 @@ function _draw()
     drawAlternativeSelection(current_item)
   end
 
-  if (not show_instructions)
+  if (not show_instructions and not show_settings)
   then
     drawHeadsUpDisplay()
   end
@@ -485,6 +543,7 @@ end
 
 function drawHeadsUpDisplay()
   local co2 = 0
+  local co2X1000 = 0
   local plasticBase = 0
   local plasticMultiplier = 1
   local lists = {outdoor_interactives, kitchen_interactives, bathroom_interactives, refrigerator_interactives}
@@ -493,16 +552,35 @@ function drawHeadsUpDisplay()
     local list = lists[i]
     for idx, val in ipairs(list)
     do
-      local carbonVal = val.options[val.current].carbon
+      local carbonVals = val.options[val.current].carbon
       local plasticVals = val.options[val.current].plastic
-      if (carbonVal != nil)
+      if (carbonVals != nil)
       then
-        co2 += carbonVal
+        local carbonAdd = carbonVals.addition
+        local carbonMult = carbonVals.multiplier
+        if (carbonMult != nil)
+        then
+          carbonMult = 1
+        end
+        if (carbonAdd != nil)
+        then
+          for i = 1, carbonMult
+          do
+            co2 += carbonAdd
+            if (co2 > 1000)
+            then
+              local thousands = flr(co2 / 1000)
+              local underThousand = co2 - (1000 * thousands)
+              co2X1000 += thousands
+              co2 = underThousand
+            end
+          end
+        end
       end
       if (plasticVals != nil)
       then
-        local plasticAdd = val.options[val.current].plastic.addition
-        local plasticMult = val.options[val.current].plastic.multiplier
+        local plasticAdd = plasticVals.addition
+        local plasticMult = plasticVals.multiplier
         if (plasticAdd != nil)
         then
           plasticBase += plasticAdd
@@ -516,12 +594,10 @@ function drawHeadsUpDisplay()
   end
 
   color(7)
-  rectfill(0, 0, 48, 16)
+  rectfill(0, 0, 52, 16)
   color(0)
-  print('co2', 2, 10)
-  print(co2, 18, 10)
-  print('plastic', 2, 2)
-  print(plasticBase * plasticMultiplier, 34, 2)
+  print('plastic '..plasticBase * plasticMultiplier, 2, 2)
+  print('co2 '..co2X1000..','..co2, 2, 10)
 end
 
 function drawInstructions()
@@ -537,11 +613,70 @@ function drawInstructions()
   print('alternatives.', 12, 60)
   print('press z to select', 12, 76)
   print('press x to cancel', 12, 84)
+  print('press z to change settings', hcenter('press z to change settings'), 102)
   print('press x to start', hcenter('press x to start'), 110)
   if (btnp(buttons.x))
   then
+    setDefaultData()
     show_instructions = false
     _draw()
+  elseif (btnp(buttons.o))
+  then
+    show_instructions = false
+    show_settings = true
+    _draw()
+  end
+end
+
+function drawSettings()
+  color(6)
+  rectfill(8, 8, 120, 120)
+  local height = 12
+  for key, value in ipairs(settings)
+  do
+    color(0)
+    if (key == setting_selected)
+    then
+      color(14)
+      if (value.value > value.minimum)
+      then
+        print('-', 100, height)
+      end
+      print('+', 116, height)
+    end
+    print(value.label, 12, height)
+    print(value.value, 108, height)
+    height = height + 10
+  end
+  color(0)
+  print('press x to start', hcenter('press x to start'), 110)
+
+  if (btnp(buttons.x))
+  then
+    setDefaultData()
+    show_settings = false
+    _draw()
+  elseif (btnp(buttons.left))
+  then
+    if (settings[setting_selected].value > settings[setting_selected].minimum)
+    then
+      settings[setting_selected].value = settings[setting_selected].value - 1
+    end
+  elseif (btnp(buttons.right))
+  then
+    settings[setting_selected].value = settings[setting_selected].value + 1
+  elseif (btnp(buttons.up))
+  then
+    if (setting_selected > 1)
+    then
+      setting_selected = setting_selected - 1
+    end
+  elseif (btnp(buttons.down))
+  then
+    if (setting_selected < #settings)
+    then
+      setting_selected = setting_selected + 1
+    end
   end
 end
 
