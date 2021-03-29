@@ -263,22 +263,22 @@ function setDefaultData()
           y = 20,
           multiplier = 1.5,
           carbon = {
-            -- kg CO2 per kg beef, but how much beef does the average american eat in a year?
-            addition = 59.6,
+            -- 59.6 kg CO2 per kg beef
+            -- average American consumes 25.8kg beef per year
+            addition = 59.6 * 25.8,
             multiplier = settings[2].value
           }
         },
         {
-          -- poultry
-          sprite_start = 41,
-          sprite_width = 1,
+          -- beyond
+          sprite_start = 11,
+          sprite_width = 2,
           sprite_height = 1,
           x = 20,
           y = 20,
           multiplier = 2,
           carbon = {
-            -- kg CO2 per kg poultry, but how much poultry does the average american eat in a year?
-            addition = 6.1,
+            addition = 6 * 25.8,
             multiplier = settings[2].value
           }
         }
@@ -311,8 +311,15 @@ function setDefaultData()
           y = 12,
           multiplier = 2,
           carbon = {
-            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
-            addition = 2.8,
+            -- kg CO2 per kg milk
+            -- average American consumes 66.1 kg milk per year
+            addition = 2.8 * 66.1,
+            multiplier = settings[2].value
+          },
+          plastic = {
+            -- less than 60 grams per milk jug
+            -- 66.1 kg is equivalent of 18 gallons milk per year
+            addition = 0.060 * 18,
             multiplier = settings[2].value
           }
           -- also plastic value?
@@ -326,11 +333,32 @@ function setDefaultData()
           y = 12,
           multiplier = 2,
           carbon = {
-            -- kg CO2 per kg milk, needs convert to liquid, how much milk does the average american consume in a year?
-            addition = 1,
+            -- kg CO2 per kg milk, needs convert to liquid
+            addition = 1 * 66.1,
             multiplier = settings[2].value
           }
           -- plastic value?
+        }
+      }
+    },
+    {
+      -- more meat
+      current = 1,
+      options = {
+        {
+          -- poultry
+          sprite_start = 41,
+          sprite_width = 1,
+          sprite_height = 1,
+          x = 20,
+          y = 50,
+          multiplier = 2.5,
+          carbon = {
+            -- 6.1 kg CO2 per kg poultry
+            -- average American consumes 48.8kg chicken per year
+            addition = 6.1 * 48.8,
+            multiplier = settings[2].value
+          }
         }
       }
     }
@@ -593,11 +621,16 @@ function drawHeadsUpDisplay()
     end
   end
 
+  local co2units = flr(co2)
+  if (co2units < 100)
+  then
+    co2units = '0'..co2units
+  end
   color(7)
   rectfill(0, 0, 52, 16)
   color(0)
-  print('plastic '..plasticBase * plasticMultiplier, 2, 2)
-  print('co2 '..co2X1000..','..co2, 2, 10)
+  print('plastic '..flr(plasticBase * plasticMultiplier), 2, 2)
+  print('co2 '..co2X1000..','..co2units, 2, 10)
 end
 
 function drawInstructions()
@@ -774,11 +807,11 @@ end
 
 __gfx__
 0000000033b33333cccccccc0005000566666666dddddddd6666666000000000000000000000000000000000000000000000000000000000aaa9aaaa66666666
-00000000333333b3cccccccc0005000564444444dddddddd6466666600000000000000000000000000000000000000000000000000000000aa999aaa67777777
-0000000033333333cccccccc0005000564444444ddddddddd660666f00666666666660000066666666666000000000000000000000000000a99999aa67777777
-00000000b3333333cccccccc55555555644444445555555566666466066666666666666006666666666666600000000000000000000000009999999a67777777
-00000000333b3333cccccccc5000500066666666dddddddd6f66666606666666666666600666666666666660000000000000000000000000a999999966666666
-0000000033333333cccccccc5000500044464444dddddddd66676606001161116116110000bb6bbb6bb6bb00000000000000000000000000aa99999a77767777
+00000000333333b3cccccccc0005000564444444dddddddd6466666600000000000000000000000000000000444022808422288000000000aa999aaa67777777
+0000000033333333cccccccc0005000564444444ddddddddd660666f00666666666660000066666666666000404020888040280800000000a99999aa67777777
+00000000b3333333cccccccc55555555644444445555555566666466066666666666666006666666666666604444220840402808000000009999999a67777777
+00000000333b3333cccccccc5000500066666666dddddddd6f66666606666666666666600666666666666660400420084040280800000000a999999966666666
+0000000033333333cccccccc5000500044464444dddddddd66676606001161116116110000bb6bbb6bb6bb00444422280420288000000000aa99999a77767777
 0000000033333b33cccccccc5000500044464444dddddddd606666660001611161161000000b6bbb6bb6b000000000000000000000000000aaa999aa77767777
 0000000033333333cccccccc5555555544464444dddddddd666d66760001161161161000000bb6bb6bb6b000000000000000000000000000aaaa9aaa77767777
 000000000000000000000000000000000000000000000000000000000001161161161000000bb6bb6bb6b0001111111111111111111111110000000000000000
