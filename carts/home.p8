@@ -207,12 +207,15 @@ function setDefaultData()
           y = 82,
           multiplier = 1.5,
           -- average American family uses 1500 plastic grocery bags per year
+          -- average American person uses ~500 plastic grocery bags per year
           plastic = {
             -- plastic grocery bag weighs about 5 grams (0.005kg)
-            addition = 0.005 * 1500,
+            addition = 0.005 * 500,
+            multiplier = settings[2].value
           },
           carbon = {
-            addition = 40,
+            addition = 0.026667 * 500,
+            multiplier = settings[2].value
           }
         },
         {
@@ -223,9 +226,10 @@ function setDefaultData()
           x = 70,
           y = 82,
           multiplier = 1.5,
-          -- 1500 plastic grocery bags is closer to 1000 paper grocery bags because of difference in carrying capacity
+          -- 500 plastic grocery bags converts to ~333 paper grocery bags because of difference in carrying capacity
           carbon = {
-            addition = 80,
+            addition = 0.08 * 333,
+            multiplier = settings[2].value
           }
         },
         {
@@ -237,7 +241,8 @@ function setDefaultData()
           y = 82,
           multiplier = 1.5,
           carbon = {
-            addition = 33,
+            addition = 0.033 * 333,
+            multiplier = settings[2].value
           }
         },
       }
