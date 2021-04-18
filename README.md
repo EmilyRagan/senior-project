@@ -25,3 +25,5 @@ Carbon footprint info from [food](https://interactive.carbonbrief.org/what-is-th
 [Per NPR's interpretation](https://www.npr.org/sections/thesalt/2017/05/16/528460207/why-are-americans-drinking-less-cows-milk-its-appeal-has-curdled#:~:text=Americans%20are%20drinking%20a%20lot%20less%20milk%20than,breakfast%20cereal%20or%20dipped%20into%20the%20occasional%20milkshake.) of USDA data, average American drinks 18 gallons of milk per year
 [kg to gallons of milk](https://coolconversion.com/density-volume-mass/----gallon--of--milk--in--kg#:~:text=US%20gallons%20to%20kilograms%20of%20Milk%20%20,%2029.4%20kilograms%20%2018%20more%20rows%20) -- 18 gallons == 66.1 kg
 [Weight of an empty plastic milk jug](https://www.waste360.com/mag/waste_hdpe_bottles_2#:~:text=An%20empty%201-gallon%20milk%20jug%20weighed%2095%20grams,1970.%20Now%2C%20it%20weighs%20less%20than%2060%20grams.)
+
+[Grocery bag statistics](https://cen.acs.org/articles/92/i37/Breaking-Plastic-Bag-Habit.html)
