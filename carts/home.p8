@@ -497,8 +497,8 @@ function setDefaultData()
   -- link the scene transition items
   outdoor_interactives[2]['navigate'] = kitchen_interactives
   kitchen_interactives[1]['navigate'] = outdoor_interactives
-  kitchen_interactives[3]['navigate'] = refrigerator_interactives
-  kitchen_interactives[4]['navigate'] = bathroom_interactives
+  kitchen_interactives[4]['navigate'] = refrigerator_interactives
+  kitchen_interactives[5]['navigate'] = bathroom_interactives
   refrigerator_interactives[2]['navigate'] = kitchen_interactives
   bathroom_interactives[1]['navigate'] = kitchen_interactives
 
@@ -506,6 +506,11 @@ function setDefaultData()
   current_scene = outdoor_interactives
   current_index = 1
   current_item = current_scene[current_index]
+  has_shown_congratulations = false
+  is_showing_congratulations = false
+
+  congratulations_carbon_condition_units = (785 * settings[1].value) + (57 * settings[2].value)
+  congratulations_carbon_condition_thousands = (2 * settings[1].value) + (2 * settings[2].value)
 end
 
 alternative_selected = 0
@@ -635,6 +640,11 @@ function _draw()
   then
     drawHeadsUpDisplay()
   end
+
+  if (is_showing_congratulations)
+  then
+    drawCongratulations()
+  end
 end
 
 function drawHeadsUpDisplay()
@@ -699,6 +709,17 @@ function drawHeadsUpDisplay()
   color(0)
   print('plastic '..flr(plasticBase * plasticMultiplier), 2, 2)
   print('co2 '..co2X1000..','..co2units, 2, 10)
+
+  if (not has_shown_congratulations)
+  then
+    if (co2X1000 < congratulations_carbon_condition_thousands)
+    then
+      is_showing_congratulations = true
+    elseif (co2X1000 == congratulations_carbon_condition_thousands and co2 < congratulations_carbon_condition_units)
+    then
+      is_showing_congratulations = true
+    end
+  end
 end
 
 function drawInstructions()
@@ -778,6 +799,29 @@ function drawSettings()
     then
       setting_selected = setting_selected + 1
     end
+  end
+end
+
+function drawCongratulations()
+  has_shown_congratulations = true
+  color(6)
+  rectfill(0, 0, 128, 128)
+  color(0)
+  print('congratulations!', hcenter('congratulations!'), 12)
+  print('you have reduced your carbon', 8, 28)
+  print('footprint to less than 25%', 8, 36)
+  print('of the starting value. these', 8, 44)
+  print('are some good choices to', 8, 52)
+  print('start, but remember that the', 8, 60)
+  print('worst offenders are big', 8, 68)
+  print('companies and governments.', 8, 76)
+  print('call your representatives to', 8, 84)
+  print('make a bigger change', 8, 92)
+  print('press x to continue exploring', hcenter('press x to continue exploring'), 110)
+
+  if (btnp(buttons.x))
+  then
+    is_showing_congratulations = false
   end
 end
 
