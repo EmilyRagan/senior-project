@@ -13,9 +13,14 @@ buttons = {
   x = 5
 }
 
-function hcenter(s)
+function hcenter(s, width)
   -- screen center minus the string length times the pixels in a char's width, cut in half
-  return 64-#s*2
+  if (width != nil)
+  then
+    return (width/2)-#s*2
+  else
+    return 64-#s*2
+  end
 end
  
 function vcenter(s)
@@ -75,6 +80,19 @@ function setDefaultData()
           -- TODO: more realistic carbon value for how solar panels impact home energy usage
           carbon = {
             addition = 2500,
+            multiplier = settings[2].value
+          }
+        },
+        {
+          -- buying renewable energy
+          text = "buy renewable energy from your power company",
+          color = 8,
+          sprite_height = 2,
+          sprite_width = 8,
+          x = 34,
+          y = 28,
+          carbon = {
+            addition = 0,
             multiplier = settings[2].value
           }
         },
@@ -866,6 +884,13 @@ function drawRefrigerator()
 end
 
 function drawSprite(item)
+  local sw = item.sprite_width * 8
+  local sh = item.sprite_height * 8
+  if (item.text != nil)
+  then
+    drawText(item, item.x, item.y, sw)
+    return
+  end
   -- https://pico-8.fandom.com/wiki/Sspr
   -- sspr( sx, sy, sw, sh, dx, dy, [dw,] [dh,] [flip_x,] [flip_y] )
   -- sx: The x coordinate of the upper left corner of the rectangle in the sprite sheet.
@@ -878,8 +903,6 @@ function drawSprite(item)
   -- dh: The height of the rectangle area of the screen. The default is to match the image height (sh).
   local sx = (item.sprite_start % 16) * 8
   local sy = (item.sprite_start \ 16) * 8
-  local sw = item.sprite_width * 8
-  local sh = item.sprite_height * 8
   local dw = sw
   local dh = sh
   if (item.multiplier != nil)
@@ -888,6 +911,19 @@ function drawSprite(item)
     dh = dh * item.multiplier
   end
   sspr(sx, sy, sw, sh, item.x, item.y, dw, dh, item.flip_x)
+end
+
+function drawText(item, x, y, width)
+  local maxLineChars = (width / 4) - 1
+  color(item.color)
+  local startIndex = 1
+  local lineHeight = 0
+  while (startIndex < #item.text) do
+    local substring = sub(item.text, startIndex, startIndex + maxLineChars)
+    print(substring, x + hcenter(substring, width), y + (lineHeight * 6))
+    startIndex = startIndex + maxLineChars + 1
+    lineHeight = lineHeight + 1
+  end
 end
 
 function updateOutside()
@@ -913,7 +949,12 @@ function drawAlternativeSelection(item)
   do
     rectfill(8, 8 + ((idx - 1) * 40), 120, 40 * idx)
     -- TODO: ideally, center the sprite in the rect
-    spr(val.sprite_start, 50, 40 * (idx - 0.5), val.sprite_width, val.sprite_height)
+    if (val.text != nil)
+    then
+      drawText(val, 8, 40 * (idx - 0.5), 108)
+    else
+      spr(val.sprite_start, 50, 40 * (idx - 0.5), val.sprite_width, val.sprite_height)
+    end
   end
 
   -- draw highlight rectangle around current selection
