@@ -497,8 +497,8 @@ function setDefaultData()
   -- link the scene transition items
   outdoor_interactives[2]['navigate'] = kitchen_interactives
   kitchen_interactives[1]['navigate'] = outdoor_interactives
-  kitchen_interactives[3]['navigate'] = refrigerator_interactives
-  kitchen_interactives[4]['navigate'] = bathroom_interactives
+  kitchen_interactives[4]['navigate'] = refrigerator_interactives
+  kitchen_interactives[5]['navigate'] = bathroom_interactives
   refrigerator_interactives[2]['navigate'] = kitchen_interactives
   bathroom_interactives[1]['navigate'] = kitchen_interactives
 
