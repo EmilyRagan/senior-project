@@ -1,5 +1,6 @@
 # senior-project
 Senior Project for Capitol Technology University, Carbon and Plastic at Home Interactive.  
+Written in [Lua](https://www.lua.org) as a [PICO-8](https://www.lexaloffle.com/pico-8.php) cartridge.  
 This project is no longer in development and has been archived, but the final product can be viewed and played at https://emilyragan.tech/seniorproject
 
 ## Research Notes
