@@ -1,5 +1,5 @@
 # senior-project
-Senior Project for Capitol Technology University, Carbon and Plastic at Home Interactive
+Senior Project for Capitol Technology University, Carbon and Plastic at Home Interactive.  
 This project is no longer in development, but the final product can be viewed and played at https://emilyragan.tech/seniorproject
 
 ## Research Notes
