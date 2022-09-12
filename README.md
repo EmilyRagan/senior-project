@@ -1,5 +1,6 @@
 # senior-project
 Senior Project for Capitol Technology University, Carbon and Plastic at Home Interactive
+This project is no longer in development, but the final product can be viewed and played at https://emilyragan.tech/seniorproject
 
 ## Research Notes
 According to the [EPA's Carbon Footprint Calculator](https://www3.epa.gov/carbon-footprint-calculator/), regarding emissions from trash: "692 pounds of CO2 equivalent per year is about average for a household of 1 person. Your waste-related emissions are calculated based on the number of people in your household." If you select all of the recycling items (aluminum & steel cans, plastic, glass, newspaper, and magazines), then the total waste emissions goes down to 401lbs.
